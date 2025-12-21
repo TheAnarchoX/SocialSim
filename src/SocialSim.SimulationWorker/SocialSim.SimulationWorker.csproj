@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SocialSim.SimulationWorker-1b0b8860-61cd-48f0-80e5-d939a0945e42</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SocialSim.Core\SocialSim.Core.csproj" />
+    <ProjectReference Include="..\SocialSim.ServiceDefaults\SocialSim.ServiceDefaults.csproj" />
+  </ItemGroup>
+</Project>
