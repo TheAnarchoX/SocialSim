@@ -17,8 +17,14 @@ builder.AddNpgsqlDbContext<SocialSimDbContext>("socialsimdb");
 builder.Services.AddSingleton<Neo4j.Driver.IDriver>(sp =>
 {
     var neo4jUri = builder.Configuration.GetConnectionString("neo4j") ?? "bolt://localhost:7687";
-    return Neo4j.Driver.GraphDatabase.Driver(neo4jUri, Neo4j.Driver.AuthTokens.Basic("neo4j", "password123"));
+    var neo4jUsername = builder.Configuration["Neo4j:Username"] ?? "neo4j";
+    var neo4jPassword = builder.Configuration["Neo4j:Password"] ?? "password123";
+    return Neo4j.Driver.GraphDatabase.Driver(neo4jUri, Neo4j.Driver.AuthTokens.Basic(neo4jUsername, neo4jPassword));
 });
+
+// Configure AT Protocol options
+builder.Services.Configure<SocialSim.Core.Configuration.ATProtocolOptions>(
+    builder.Configuration.GetSection("ATProtocol"));
 
 // SignalR for real-time updates
 builder.Services.AddSignalR();
@@ -29,8 +35,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
+              .WithHeaders("Content-Type", "Authorization", "X-Requested-With")
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
               .AllowCredentials();
     });
 });

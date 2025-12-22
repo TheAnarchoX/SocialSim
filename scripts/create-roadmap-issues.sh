@@ -53,7 +53,7 @@ gh issue create \
 - [ ] Define relationship types (Follow, Block, Mute, Report)
 - [ ] Design engagement models (Likes, Shares, Quotes, Bookmarks)
 - [ ] Model content hierarchies (Threads, Conversations, Quote chains)
-- [ ] Design privacy & visibility rules (Public, Followers-only, Private, Mentions)" > /dev/null
+- [ ] Design privacy & visibility rules (Public, Followers-only, Private, Mentions)"
 echo "    Created sub-issue: Design comprehensive ERD"
 
 gh issue create \
@@ -67,7 +67,7 @@ gh issue create \
 - [ ] Define node types and properties
 - [ ] Define relationship types and weights
 - [ ] Design indexes for performance
-- [ ] Plan for temporal data (relationship history, follower count over time)" > /dev/null
+- [ ] Plan for temporal data (relationship history, follower count over time)"
 echo "    Created sub-issue: Design graph data model for Neo4J"
 
 gh issue create \
@@ -81,7 +81,7 @@ gh issue create \
 - [ ] Normalize data for consistency
 - [ ] Plan denormalization for performance where needed
 - [ ] Design audit/history tables
-- [ ] Define database constraints and triggers" > /dev/null
+- [ ] Define database constraints and triggers"
 echo "    Created sub-issue: Design relational schema for PostgreSQL"
 
 gh issue create \
@@ -93,7 +93,7 @@ gh issue create \
 
 ## Tasks
 - [ ] Document data model with examples and use cases
-- [ ] Review and validate with stakeholders" > /dev/null
+- [ ] Review and validate with stakeholders"
 echo "    Created sub-issue: Document and validate data model"
 
 # Phase 1.2: Simulation Data Model Design
@@ -132,7 +132,7 @@ gh issue create \
 - [ ] Activity patterns (Time of day, frequency distributions)
 - [ ] Content preferences (Topics, media types, length)
 - [ ] Social behavior (Follower strategy, engagement style)
-- [ ] Influence susceptibility (How easily swayed by trends/influencers)" > /dev/null
+- [ ] Influence susceptibility (How easily swayed by trends/influencers)"
 echo "    Created sub-issue: Design agent behavior models"
 
 gh issue create \
@@ -145,7 +145,7 @@ gh issue create \
 ## Tasks
 - [ ] Simulation configuration (Time scale, number of agents, scenarios)
 - [ ] Real-time metrics (Active users, posts/min, engagement rates)
-- [ ] Historical snapshots (Periodic state saves)" > /dev/null
+- [ ] Historical snapshots (Periodic state saves)"
 echo "    Created sub-issue: Design simulation state models"
 
 gh issue create \
@@ -158,7 +158,7 @@ gh issue create \
 ## Tasks
 - [ ] Event taxonomy (Social, Content, System events)
 - [ ] Event metadata (Timestamp, source, causality chain)
-- [ ] Event aggregation patterns" > /dev/null
+- [ ] Event aggregation patterns"
 echo "    Created sub-issue: Design event models"
 
 gh issue create \
@@ -171,7 +171,7 @@ gh issue create \
 ## Tasks
 - [ ] Viral event configurations (Trending topics, memes)
 - [ ] Marketing campaigns (Promoted content, influencer activations)
-- [ ] Crisis simulations (Misinformation spread, coordinated attacks)" > /dev/null
+- [ ] Crisis simulations (Misinformation spread, coordinated attacks)"
 echo "    Created sub-issue: Design scenario & campaign models"
 
 # Phase 1.3: AT Protocol Data Model Extension
@@ -217,7 +217,7 @@ gh issue create \
 - [ ] Lexicon definitions for custom record types
 
 ## Documentation
-See docs/AT_PROTOCOL_CUSTOM_HANDLE.md" > /dev/null
+See docs/AT_PROTOCOL_CUSTOM_HANDLE.md"
 echo "    Created sub-issue: Map AT Protocol primitives to internal models"
 
 gh issue create \
@@ -230,7 +230,7 @@ gh issue create \
 ## Tasks
 - [ ] Collection schemas (posts, likes, follows, blocks, etc.)
 - [ ] Record versioning and history
-- [ ] Blob storage for media" > /dev/null
+- [ ] Blob storage for media"
 echo "    Created sub-issue: Design AT Protocol repository layout"
 
 gh issue create \
@@ -243,7 +243,7 @@ gh issue create \
 ## Tasks
 - [ ] PDS (Personal Data Server) metadata
 - [ ] Cross-instance references
-- [ ] Synchronization state" > /dev/null
+- [ ] Synchronization state"
 echo "    Created sub-issue: Design federation models"
 
 gh issue create \
@@ -259,7 +259,7 @@ gh issue create \
 - [ ] Multi-domain support for different agent types
 
 ## Documentation
-See docs/AT_PROTOCOL_CUSTOM_HANDLE.md" > /dev/null
+See docs/AT_PROTOCOL_CUSTOM_HANDLE.md"
 echo "    Created sub-issue: Design custom domain handle configuration"
 
 # Phase 2: Storage & Persistence Layer
@@ -307,7 +307,7 @@ gh issue create \
 - [ ] Fluent API for Cypher query construction
 - [ ] Type-safe node and relationship builders
 - [ ] Support for complex pattern matching
-- [ ] Query optimization helpers" > /dev/null
+- [ ] Query optimization helpers"
 echo "    Created sub-issue: Build custom query builder for Neo4J"
 
 gh issue create \
@@ -321,7 +321,7 @@ gh issue create \
 - [ ] CRUD operations for nodes
 - [ ] Relationship management (create, delete, update weights)
 - [ ] Traversal operations (shortest path, degree of separation)
-- [ ] Batch operations for performance" > /dev/null
+- [ ] Batch operations for performance"
 echo "    Created sub-issue: Implement generic repository pattern for graph data"
 
 gh issue create \
@@ -335,7 +335,7 @@ gh issue create \
 - [ ] SocialGraphRepository (follow graph operations)
 - [ ] InfluenceRepository (influence calculation and caching)
 - [ ] CommunityRepository (community detection)
-- [ ] EngagementRepository (content interaction patterns)" > /dev/null
+- [ ] EngagementRepository (content interaction patterns)"
 echo "    Created sub-issue: Create specialized Neo4J repositories"
 
 gh issue create \
@@ -348,7 +348,7 @@ gh issue create \
 ## Tasks
 - [ ] Redis-backed cache for hot paths
 - [ ] Cache invalidation strategies
-- [ ] Read-through/write-through patterns" > /dev/null
+- [ ] Read-through/write-through patterns"
 echo "    Created sub-issue: Implement caching layer over Neo4J"
 
 gh issue create \
@@ -361,7 +361,7 @@ gh issue create \
 ## Tasks
 - [ ] Unit tests for query builder
 - [ ] Unit tests for repositories
-- [ ] Integration tests with test database" > /dev/null
+- [ ] Integration tests with test database"
 echo "    Created sub-issue: Add comprehensive unit tests for Neo4J repositories"
 
 # Phase 2.2: PostgreSQL Repository Layer
@@ -402,7 +402,7 @@ gh issue create \
 - [ ] Configure all entities from data model
 - [ ] Set up relationships and navigation properties
 - [ ] Configure indexes for performance
-- [ ] Add query filters for soft deletes" > /dev/null
+- [ ] Add query filters for soft deletes"
 echo "    Created sub-issue: Create Entity Framework Core DbContext"
 
 gh issue create \
@@ -415,7 +415,7 @@ gh issue create \
 ## Tasks
 - [ ] Generic repository for common CRUD
 - [ ] Specialized repositories per aggregate root
-- [ ] Unit of Work pattern for transactions" > /dev/null
+- [ ] Unit of Work pattern for transactions"
 echo "    Created sub-issue: Implement Repository pattern for EF Core"
 
 gh issue create \
@@ -428,7 +428,7 @@ gh issue create \
 ## Tasks
 - [ ] Initial database schema
 - [ ] Seed data for development
-- [ ] Migration scripts for production" > /dev/null
+- [ ] Migration scripts for production"
 echo "    Created sub-issue: Create EF Core migrations"
 
 gh issue create \
@@ -441,7 +441,7 @@ gh issue create \
 ## Tasks
 - [ ] CreatedAt, UpdatedAt, DeletedAt timestamps
 - [ ] Audit log tables
-- [ ] Change history tracking" > /dev/null
+- [ ] Change history tracking"
 echo "    Created sub-issue: Implement change tracking and audit"
 
 gh issue create \
@@ -453,7 +453,7 @@ gh issue create \
 
 ## Tasks
 - [ ] Test data generators
-- [ ] Realistic sample data sets" > /dev/null
+- [ ] Realistic sample data sets"
 echo "    Created sub-issue: Add database seeding utilities"
 
 # Phase 2.3: Redis Integration
@@ -490,7 +490,7 @@ gh issue create \
 ## Tasks
 - [ ] Event serialization/deserialization
 - [ ] Channel management
-- [ ] Subscriber registration" > /dev/null
+- [ ] Subscriber registration"
 echo "    Created sub-issue: Implement Redis pub/sub for events"
 
 gh issue create \
@@ -503,7 +503,7 @@ gh issue create \
 ## Tasks
 - [ ] Distributed cache interface
 - [ ] Cache-aside pattern implementation
-- [ ] Cache key strategies" > /dev/null
+- [ ] Cache key strategies"
 echo "    Created sub-issue: Create caching abstractions"
 
 gh issue create \
@@ -515,7 +515,7 @@ gh issue create \
 
 ## Tasks
 - [ ] Sliding window rate limiters
-- [ ] Per-user and per-endpoint limits" > /dev/null
+- [ ] Per-user and per-endpoint limits"
 echo "    Created sub-issue: Implement rate limiting"
 
 gh issue create \
@@ -527,7 +527,7 @@ gh issue create \
 
 ## Tasks
 - [ ] Distributed session store
-- [ ] Session timeout handling" > /dev/null
+- [ ] Session timeout handling"
 echo "    Created sub-issue: Add session management"
 
 # Phase 2.4: Data Access Testing & Performance
@@ -567,7 +567,7 @@ gh issue create \
 ## Tasks
 - [ ] Neo4J repository tests
 - [ ] EF Core repository tests
-- [ ] Redis integration tests" > /dev/null
+- [ ] Redis integration tests"
 echo "    Created sub-issue: Create integration tests for all repositories"
 
 gh issue create \
@@ -580,7 +580,7 @@ gh issue create \
 ## Tasks
 - [ ] Identify slow queries
 - [ ] Add missing indexes
-- [ ] Optimize query patterns" > /dev/null
+- [ ] Optimize query patterns"
 echo "    Created sub-issue: Benchmark query performance"
 
 gh issue create \
@@ -593,7 +593,7 @@ gh issue create \
 ## Tasks
 - [ ] 1M+ agents
 - [ ] 10M+ posts
-- [ ] 100M+ relationships" > /dev/null
+- [ ] 100M+ relationships"
 echo "    Created sub-issue: Load testing with realistic data volumes"
 
 echo ""

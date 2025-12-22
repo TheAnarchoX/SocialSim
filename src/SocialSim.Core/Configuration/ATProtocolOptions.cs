@@ -70,7 +70,7 @@ public class ATProtocolOptions
         var suffix = $".{CustomDomain}";
         if (handle.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
         {
-            return handle.Substring(0, handle.Length - suffix.Length);
+            return handle[..^suffix.Length];
         }
         
         return null;

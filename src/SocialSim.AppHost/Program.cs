@@ -19,13 +19,13 @@ var redis = builder.AddRedis("redis");
 // API Service
 var api = builder.AddProject<Projects.SocialSim_Api>("api")
     .WithReference(postgres)
-    .WithEnvironment("ConnectionStrings__neo4j", neo4j.GetEndpoint("bolt"))
+    .WithEnvironment("ConnectionStrings__neo4j", $"{neo4j.GetEndpoint("bolt")}")
     .WithReference(redis);
 
 // Simulation Worker
 var worker = builder.AddProject<Projects.SocialSim_SimulationWorker>("worker")
     .WithReference(postgres)
-    .WithEnvironment("ConnectionStrings__neo4j", neo4j.GetEndpoint("bolt"))
+    .WithEnvironment("ConnectionStrings__neo4j", $"{neo4j.GetEndpoint("bolt")}")
     .WithReference(redis);
 
 builder.Build().Run();

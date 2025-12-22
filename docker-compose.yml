@@ -5,9 +5,9 @@ services:
     image: postgres:latest
     container_name: socialsim-postgres
     environment:
-      POSTGRES_DB: socialsimdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-socialsimdb}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
       - "5432:5432"
     volumes:
@@ -22,14 +22,19 @@ services:
     image: neo4j:latest
     container_name: socialsim-neo4j
     environment:
-      NEO4J_AUTH: neo4j/password123
-      NEO4J_PLUGINS: '["apoc", "graph-data-science"]'
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-password123}
+      # Note: APOC and GDS plugins require enterprise edition or separate installation
+      # For community edition, you need to download plugins manually
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
     ports:
       - "7474:7474"  # HTTP
       - "7687:7687"  # Bolt
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
+      # Uncomment to add plugins manually:
+      # - ./neo4j-plugins:/plugins
     healthcheck:
       test: ["CMD-SHELL", "wget -O /dev/null -q http://localhost:7474 || exit 1"]
       interval: 10s
@@ -53,8 +58,8 @@ services:
     image: dpage/pgadmin4:latest
     container_name: socialsim-pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@socialsim.local
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@socialsim.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
       - "5050:80"
     depends_on:

@@ -10,8 +10,8 @@ public class SocialSimDbContext : DbContext
     {
     }
 
-    public DbSet<SocialAgent> Agents { get; set; }
-    public DbSet<Post> Posts { get; set; }
+    public DbSet<SocialAgent> Agents { get; set; } = null!;
+    public DbSet<Post> Posts { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

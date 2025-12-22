@@ -8,7 +8,6 @@ namespace SocialSim.SimulationWorker;
 /// </summary>
 public class Worker(ILogger<Worker> logger) : BackgroundService
 {
-    private readonly Random _random = new();
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -43,7 +42,7 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
         logger.LogInformation("Simulation tick at: {time}", DateTimeOffset.Now);
         
         // Placeholder: Generate random simulation events
-        var eventType = _random.Next(0, 3);
+        var eventType = Random.Shared.Next(0, 3);
         
         switch (eventType)
         {
