@@ -64,7 +64,8 @@ This phase establishes the core data models that everything else builds upon. Ge
 ### 1.3 AT Protocol Data Model Extension
 - [ ] Map AT Protocol primitives to internal models
   - [ ] DID (Decentralized Identifiers) integration
-  - [ ] Handle resolution and verification
+  - [ ] Handle resolution and verification (DNS TXT and HTTPS well-known)
+  - [ ] Custom domain handle support (e.g., @theanarchox.net)
   - [ ] Repository structure (Collections, Records)
   - [ ] Content addressing (CIDs, rkeys)
   - [ ] Lexicon definitions for custom record types
@@ -76,6 +77,10 @@ This phase establishes the core data models that everything else builds upon. Ge
   - [ ] PDS (Personal Data Server) metadata
   - [ ] Cross-instance references
   - [ ] Synchronization state
+- [ ] Design custom domain handle configuration
+  - [ ] Domain-to-DID mapping schema
+  - [ ] Handle generation patterns for simulation agents
+  - [ ] Multi-domain support for different agent types
 - [ ] **Milestone**: AT Protocol model extensions documented
 
 **Phase 1 Output**: Comprehensive data model documentation with ERDs, schemas, and examples
@@ -170,12 +175,15 @@ This phase establishes the core data models that everything else builds upon. Ge
 ### 3.1 AT Protocol Core Implementation
 - [ ] Implement DID resolution
   - [ ] DID:plc resolver
-  - [ ] DID:web resolver
+  - [ ] DID:web resolver for custom domains (theanarchox.net)
   - [ ] DID document caching
+  - [ ] DID generation for simulation agents
 - [ ] Implement Handle resolution
-  - [ ] DNS-based handle verification
+  - [ ] DNS TXT record verification (_atproto.theanarchox.net)
+  - [ ] HTTPS well-known endpoint (/.well-known/atproto-did)
   - [ ] Handle to DID mapping
   - [ ] Handle change handling
+  - [ ] Custom domain handle support (@username.theanarchox.net)
 - [ ] Implement Repository structure
   - [ ] Collection management
   - [ ] Record CRUD operations
@@ -191,6 +199,7 @@ This phase establishes the core data models that everything else builds upon. Ge
   - [ ] com.atproto.server.* endpoints
   - [ ] com.atproto.repo.* endpoints
   - [ ] Authentication and authorization
+  - [ ] Custom domain handle registration
 - [ ] Implement blob storage
   - [ ] Image upload and storage
   - [ ] Video processing
@@ -199,7 +208,11 @@ This phase establishes the core data models that everything else builds upon. Ge
   - [ ] Event log (commit log)
   - [ ] Sync subscribers
   - [ ] Catch-up sync
-- [ ] **Milestone**: Basic PDS operational
+- [ ] Configure custom domain integration
+  - [ ] Serve .well-known/atproto-did endpoint
+  - [ ] Handle DNS verification
+  - [ ] Multi-domain support for different agent types
+- [ ] **Milestone**: Basic PDS operational with custom domain support
 
 ### 3.3 AppView (Aggregation Layer)
 - [ ] Implement AppView indexing

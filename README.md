@@ -20,9 +20,11 @@ SocialSim is built using **.NET Aspire** as the orchestration framework, providi
 
 The simulation is designed with the **AT Protocol** (Bluesky) in mind, featuring:
 - Decentralized Identifier (DID) support for agents
-- Handle-based addressing
+- Handle-based addressing with custom domain support (@username.theanarchox.net)
 - Content addressing with CIDs and rkeys
 - Protocol-agnostic agent architecture supporting traditional and decentralized social protocols
+
+**Custom Domain Handles**: All simulated agents use custom domain handles (e.g., `agent001.theanarchox.net`) instead of platform-specific handles. See [docs/AT_PROTOCOL_CUSTOM_HANDLE.md](docs/AT_PROTOCOL_CUSTOM_HANDLE.md) for setup instructions.
 
 ## Project Structure
 

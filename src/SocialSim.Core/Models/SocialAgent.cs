@@ -20,7 +20,8 @@ public class SocialAgent
     public string? DecentralizedId { get; set; }
     
     /// <summary>
-    /// Handle for AT Protocol (e.g., user.bsky.social)
+    /// Handle for AT Protocol (e.g., user.bsky.social or user.theanarchox.net for custom domain)
+    /// In SocialSim, all agents use the custom domain configured in ATProtocolOptions
     /// </summary>
     public string? Handle { get; set; }
     
