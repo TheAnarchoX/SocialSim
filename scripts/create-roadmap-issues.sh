@@ -90,12 +90,13 @@ gh issue create \
   --body "## Overview
 Part of Phase 1: Data Foundation (see ROADMAP.md)
 
-Extend data models to support AT Protocol (Bluesky) primitives and federation.
+Extend data models to support AT Protocol (Bluesky) primitives, federation, and custom domain handles.
 
 ## Tasks
 - [ ] Map AT Protocol primitives to internal models
   - [ ] DID (Decentralized Identifiers) integration
-  - [ ] Handle resolution and verification
+  - [ ] Handle resolution and verification (DNS TXT and HTTPS well-known)
+  - [ ] Custom domain handle support (e.g., @theanarchox.net)
   - [ ] Repository structure (Collections, Records)
   - [ ] Content addressing (CIDs, rkeys)
   - [ ] Lexicon definitions for custom record types
@@ -107,9 +108,16 @@ Extend data models to support AT Protocol (Bluesky) primitives and federation.
   - [ ] PDS (Personal Data Server) metadata
   - [ ] Cross-instance references
   - [ ] Synchronization state
+- [ ] Design custom domain handle configuration
+  - [ ] Domain-to-DID mapping schema
+  - [ ] Handle generation patterns for simulation agents
+  - [ ] Multi-domain support for different agent types
 
 ## Milestone
 AT Protocol model extensions documented
+
+## Documentation
+See docs/AT_PROTOCOL_CUSTOM_HANDLE.md for custom domain setup
 
 ## Reference
 See ROADMAP.md - Phase 1.3"
@@ -268,17 +276,20 @@ gh issue create \
   --body "## Overview
 Part of Phase 3: AT Protocol Foundation (see ROADMAP.md)
 
-Implement core AT Protocol primitives: DID, Handle, Repository, CID.
+Implement core AT Protocol primitives: DID, Handle, Repository, CID with custom domain support.
 
 ## Tasks
 - [ ] Implement DID resolution
   - [ ] DID:plc resolver
-  - [ ] DID:web resolver
+  - [ ] DID:web resolver for custom domains (theanarchox.net)
   - [ ] DID document caching
+  - [ ] DID generation for simulation agents
 - [ ] Implement Handle resolution
-  - [ ] DNS-based handle verification
+  - [ ] DNS TXT record verification (_atproto.theanarchox.net)
+  - [ ] HTTPS well-known endpoint (/.well-known/atproto-did)
   - [ ] Handle to DID mapping
   - [ ] Handle change handling
+  - [ ] Custom domain handle support (@username.theanarchox.net)
 - [ ] Implement Repository structure
   - [ ] Collection management
   - [ ] Record CRUD operations
@@ -294,6 +305,9 @@ Core AT Protocol primitives working
 ## Dependencies
 Requires: Phase 1, Phase 2 completion
 
+## Documentation
+See docs/AT_PROTOCOL_CUSTOM_HANDLE.md for setup guide
+
 ## Reference
 See ROADMAP.md - Phase 3.1"
 
@@ -304,13 +318,14 @@ gh issue create \
   --body "## Overview
 Part of Phase 3: AT Protocol Foundation (see ROADMAP.md)
 
-Implement Personal Data Server with AT Protocol endpoints.
+Implement Personal Data Server with AT Protocol endpoints and custom domain support.
 
 ## Tasks
 - [ ] Implement PDS endpoints
   - [ ] com.atproto.server.* endpoints
   - [ ] com.atproto.repo.* endpoints
   - [ ] Authentication and authorization
+  - [ ] Custom domain handle registration
 - [ ] Implement blob storage
   - [ ] Image upload and storage
   - [ ] Video processing
@@ -319,12 +334,19 @@ Implement Personal Data Server with AT Protocol endpoints.
   - [ ] Event log (commit log)
   - [ ] Sync subscribers
   - [ ] Catch-up sync
+- [ ] Configure custom domain integration
+  - [ ] Serve .well-known/atproto-did endpoint
+  - [ ] Handle DNS verification
+  - [ ] Multi-domain support for different agent types
 
 ## Milestone
-Basic PDS operational
+Basic PDS operational with custom domain support
 
 ## Dependencies
 Requires: Phase 3.1 completion
+
+## Documentation
+See docs/AT_PROTOCOL_CUSTOM_HANDLE.md for DNS configuration
 
 ## Reference
 See ROADMAP.md - Phase 3.2"
