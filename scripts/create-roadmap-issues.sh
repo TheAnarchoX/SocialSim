@@ -36,7 +36,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 1.1")
-PHASE_1_1=$(echo "$PHASE_1_1_URL" | grep -oP '\d+$')
+PHASE_1_1=$(echo "$PHASE_1_1_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_1}"
 
@@ -114,7 +114,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 1.2")
-PHASE_1_2=$(echo "$PHASE_1_2_URL" | grep -oP '\d+$')
+PHASE_1_2=$(echo "$PHASE_1_2_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_2}"
 
@@ -194,7 +194,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 1.3")
-PHASE_1_3=$(echo "$PHASE_1_3_URL" | grep -oP '\d+$')
+PHASE_1_3=$(echo "$PHASE_1_3_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_3}"
 
@@ -288,7 +288,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 2.1")
-PHASE_2_1=$(echo "$PHASE_2_1_URL" | grep -oP '\d+$')
+PHASE_2_1=$(echo "$PHASE_2_1_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_1}"
 
@@ -382,7 +382,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 2.2")
-PHASE_2_2=$(echo "$PHASE_2_2_URL" | grep -oP '\d+$')
+PHASE_2_2=$(echo "$PHASE_2_2_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_2}"
 
@@ -470,7 +470,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 2.3")
-PHASE_2_3=$(echo "$PHASE_2_3_URL" | grep -oP '\d+$')
+PHASE_2_3=$(echo "$PHASE_2_3_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_3}"
 
@@ -546,7 +546,7 @@ This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
 See ROADMAP.md - Phase 2.4")
-PHASE_2_4=$(echo "$PHASE_2_4_URL" | grep -oP '\d+$')
+PHASE_2_4=$(echo "$PHASE_2_4_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_4}"
 
