@@ -1,3 +1,9 @@
+# SocialSim Docker Compose Configuration
+# 
+# IMPORTANT: You must create a .env file before running docker-compose
+# Copy .env.example to .env and configure your secure credentials
+# Running without a .env file will fail as no default passwords are provided
+#
 version: '3.8'
 
 services:
@@ -5,9 +11,9 @@ services:
     image: postgres:latest
     container_name: socialsim-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-socialsimdb}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -22,7 +28,7 @@ services:
     image: neo4j:latest
     container_name: socialsim-neo4j
     environment:
-      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-password123}
+      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASSWORD}
       # Note: APOC and GDS plugins require enterprise edition or separate installation
       # For community edition, you need to download plugins manually
       NEO4J_apoc_export_file_enabled: "true"
@@ -58,8 +64,8 @@ services:
     image: dpage/pgadmin4:latest
     container_name: socialsim-pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@socialsim.local}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
     depends_on:

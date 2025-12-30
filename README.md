@@ -82,7 +82,23 @@ Background worker service that:
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Docker](https://www.docker.com/get-started) (for running databases)
 
+### Configuration
+
+**Important**: Before running the application, you must configure your credentials:
+
+1. **For Docker Compose** (manual infrastructure setup):
+   ```bash
+   cp .env.example .env
+   # Edit .env and set secure passwords
+   ```
+   The docker-compose.yml requires a .env file with your credentials. Running without it will fail.
+
+2. **For .NET Aspire** (recommended):
+   Aspire uses appsettings.Development.json with development credentials. For production, use environment variables or Azure Key Vault.
+
 ### Running the Application
+
+#### Option 1: Using .NET Aspire (Recommended)
 
 1. Clone the repository:
    ```bash
@@ -105,26 +121,28 @@ Background worker service that:
 
 5. Connect to SignalR hub at `https://localhost:xxxx/simulationHub` for real-time updates
 
-### Manual Infrastructure Setup (Alternative)
+#### Option 2: Using Docker Compose
 
-If you prefer to run infrastructure separately:
+1. Clone the repository and configure credentials:
+   ```bash
+   git clone https://github.com/TheAnarchoX/SocialSim.git
+   cd SocialSim
+   cp .env.example .env
+   # Edit .env file with your secure passwords
+   ```
 
-```bash
-# PostgreSQL
-docker run -d --name socialsim-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 postgres
+2. Start infrastructure:
+   ```bash
+   docker-compose up -d
+   ```
 
-# Neo4J
-docker run -d --name socialsim-neo4j -e NEO4J_AUTH=neo4j/password123 -p 7474:7474 -p 7687:7687 neo4j
+3. Run the application projects:
+   ```bash
+   dotnet run --project src/SocialSim.Api
+   dotnet run --project src/SocialSim.SimulationWorker
+   ```
 
-# Redis
-docker run -d --name socialsim-redis -p 6379:6379 redis
-```
-
-Then run individual projects:
-```bash
-dotnet run --project src/SocialSim.Api
-dotnet run --project src/SocialSim.SimulationWorker
-```
+**Note**: Never commit the `.env` file to version control. It contains sensitive credentials.
 
 ## Simulation Features
 

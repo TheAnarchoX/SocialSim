@@ -35,8 +35,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
-              .WithHeaders("Content-Type", "Authorization", "X-Requested-With")
-              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+              .WithHeaders("Content-Type", "Authorization")
+              .WithMethods("GET", "POST", "PUT", "DELETE")
               .AllowCredentials();
     });
 });
