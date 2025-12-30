@@ -1,6 +1,6 @@
 # SocialSim
 
-This repository serves as both some fun and an experiment. It features an advanced and in-depth Social Network Simulation and tools to analyze and affect the network (think, creating hype, events etc). 
+This repository serves as both some fun and an experiment. It features an advanced and in-depth Social Network Simulation and tools to analyze and affect the network (think, creating hype, events etc).
 
 ## Architecture
 
@@ -19,6 +19,7 @@ SocialSim is built using **.NET Aspire** as the orchestration framework, providi
 ### AT Protocol Support
 
 The simulation is designed with the **AT Protocol** (Bluesky) in mind, featuring:
+
 - Decentralized Identifier (DID) support for agents
 - Handle-based addressing with custom domain support (@username.theanarchox.net)
 - Content addressing with CIDs and rkeys
@@ -42,34 +43,44 @@ SocialSim/
 ### Components
 
 #### SocialSim.AppHost
+
 The Aspire application host that orchestrates all services and infrastructure:
+
 - Configures PostgreSQL, Neo4J, and Redis containers
 - Manages service discovery and connection strings
 - Provides the Aspire dashboard for monitoring
 
 #### SocialSim.ServiceDefaults
+
 Shared configuration for all services:
+
 - OpenTelemetry for distributed tracing
 - Health checks
 - Service discovery
 - Resilience patterns
 
 #### SocialSim.Core
+
 Domain layer with core models:
+
 - `SocialAgent` - Represents users/agents in the simulation with behavioral traits
 - `SocialConnection` - Graph relationships between agents
 - `Post` - Content created by agents
 - `SimulationEvents` - Event-driven architecture for simulation actions
 
 #### SocialSim.Api
+
 ASP.NET Core Web API providing:
+
 - REST endpoints for querying simulation state
 - SignalR hub for real-time updates
 - PostgreSQL for data persistence
 - Neo4J integration for graph queries
 
 #### SocialSim.SimulationWorker
+
 Background worker service that:
+
 - Runs the simulation engine
 - Generates events based on agent behaviors
 - Updates the social graph in Neo4J
@@ -87,10 +98,12 @@ Background worker service that:
 **Important**: Before running the application, you must configure your credentials:
 
 1. **For Docker Compose** (manual infrastructure setup):
+
    ```bash
    cp .env.example .env
    # Edit .env and set secure passwords
    ```
+
    The docker-compose.yml requires a .env file with your credentials. Running without it will fail.
 
 2. **For .NET Aspire** (recommended):
@@ -101,12 +114,14 @@ Background worker service that:
 #### Option 1: Using .NET Aspire (Recommended)
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/TheAnarchoX/SocialSim.git
    cd SocialSim
    ```
 
 2. Run the Aspire AppHost:
+
    ```bash
    dotnet run --project src/SocialSim.AppHost
    ```
@@ -124,6 +139,7 @@ Background worker service that:
 #### Option 2: Using Docker Compose
 
 1. Clone the repository and configure credentials:
+
    ```bash
    git clone https://github.com/TheAnarchoX/SocialSim.git
    cd SocialSim
@@ -132,11 +148,13 @@ Background worker service that:
    ```
 
 2. Start infrastructure:
+
    ```bash
    docker-compose up -d
    ```
 
 3. Run the application projects:
+
    ```bash
    dotnet run --project src/SocialSim.Api
    dotnet run --project src/SocialSim.SimulationWorker
@@ -147,30 +165,37 @@ Background worker service that:
 ## Simulation Features
 
 ### Agent Behaviors
+
 Agents have configurable behavioral traits:
+
 - **Posting Frequency** - How often they create content
 - **Engagement Rate** - Likelihood to interact with posts
 - **Influence Score** - Impact on other agents
 - **Interests** - Topics that drive content generation
 
 ### Event-Driven Simulation
+
 The simulation generates events:
+
 - `PostCreatedEvent` - Agent creates new content
 - `AgentFollowedEvent` - Agent follows another
 - `PostEngagementEvent` - Agent likes/reposts/replies
 - `SimulationScenarioEvent` - Trigger viral events, trending topics
 
 ### Real-Time Updates
+
 Subscribe to the SignalR hub to receive live simulation events and visualize the network evolving in real-time.
 
 ## Development
 
 ### Build
+
 ```bash
 dotnet build
 ```
 
 ### Run Tests
+
 ```bash
 dotnet test
 ```

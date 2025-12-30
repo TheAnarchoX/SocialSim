@@ -13,7 +13,9 @@ Thank you for your interest in contributing to SocialSim! This document provides
 ## Architecture Principles
 
 ### Event-Driven Design
+
 The simulation uses an event-driven architecture where:
+
 - Agent actions generate events
 - Events are published to Redis for distribution
 - Workers and services subscribe to relevant events
@@ -22,12 +24,14 @@ The simulation uses an event-driven architecture where:
 ### Database Strategy
 
 #### PostgreSQL (Relational Data)
+
 - Agent profiles and metadata
 - Posts and content
 - Simulation configurations
 - Use Entity Framework Core for data access
 
 #### Neo4J (Graph Data)
+
 - Social connections (follow graph)
 - Network analysis and pathfinding
 - Community detection
@@ -35,6 +39,7 @@ The simulation uses an event-driven architecture where:
 - Use Cypher queries via Neo4j.Driver
 
 #### Redis (Caching & Pub/Sub)
+
 - Event distribution
 - Caching frequently accessed data
 - Real-time leaderboards
@@ -47,6 +52,7 @@ SocialSim is designed to potentially integrate with the AT Protocol (ATProto) us
 ### Current AT Protocol Support
 
 The domain models include fields for AT Protocol concepts:
+
 - **DID (Decentralized Identifier)**: `SocialAgent.DecentralizedId`
 - **Handle**: `SocialAgent.Handle` (e.g., user.bsky.social)
 - **rkey (Record Key)**: `Post.RecordKey`
@@ -84,6 +90,7 @@ When implementing full AT Protocol support, consider:
    - Network analytics data
 
 ### AT Protocol Resources
+
 - [AT Protocol Specs](https://atproto.com/specs/atp)
 - [Bluesky Developer Docs](https://docs.bsky.app/)
 - [AT Protocol GitHub](https://github.com/bluesky-social/atproto)
@@ -114,30 +121,35 @@ When implementing full AT Protocol support, consider:
 ## Ideas for Contributions
 
 ### Core Features
+
 - [ ] Implement graph algorithms in Neo4J (PageRank, community detection)
 - [ ] Add more sophisticated agent behaviors
 - [ ] Create viral event scenarios
 - [ ] Implement influence propagation models
 
 ### AT Protocol
+
 - [ ] Full AT Protocol PDS implementation
 - [ ] Federation between multiple instances
 - [ ] Custom feed algorithms
 - [ ] DID:plc resolver integration
 
 ### Visualization
+
 - [ ] Web-based network visualization
 - [ ] Real-time dashboard
 - [ ] Agent activity timelines
 - [ ] Network metrics graphs
 
 ### Analysis
+
 - [ ] Network topology analysis
 - [ ] Information cascade tracking
 - [ ] Echo chamber detection
 - [ ] Bot detection algorithms
 
 ### Infrastructure
+
 - [ ] Kubernetes deployment configs
 - [ ] Performance optimization
 - [ ] Horizontal scaling support
@@ -146,6 +158,7 @@ When implementing full AT Protocol support, consider:
 ## Questions?
 
 Open an issue for:
+
 - Feature requests
 - Bug reports
 - Architecture discussions
