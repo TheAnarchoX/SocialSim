@@ -19,7 +19,7 @@ echo "=========================================="
 
 # Phase 1.1: Social Network Data Model Design
 echo "Creating Phase 1.1 issues..."
-PHASE_1_1=$(gh issue create \
+PHASE_1_1_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 1.1] Social Network Data Model Design" \
   --label "phase-1,data-model,critical,epic" \
@@ -35,9 +35,8 @@ Data model approved and documented
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 1.1" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 1.1")
+PHASE_1_1=$(echo "$PHASE_1_1_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_1}"
 
@@ -98,7 +97,7 @@ echo "    Created sub-issue: Document and validate data model"
 
 # Phase 1.2: Simulation Data Model Design
 echo "Creating Phase 1.2 issues..."
-PHASE_1_2=$(gh issue create \
+PHASE_1_2_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 1.2] Simulation Data Model Design" \
   --label "phase-1,data-model,simulation,critical,epic" \
@@ -114,9 +113,8 @@ Simulation model approved and documented
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 1.2" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 1.2")
+PHASE_1_2=$(echo "$PHASE_1_2_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_2}"
 
@@ -176,7 +174,7 @@ echo "    Created sub-issue: Design scenario & campaign models"
 
 # Phase 1.3: AT Protocol Data Model Extension
 echo "Creating Phase 1.3 issues..."
-PHASE_1_3=$(gh issue create \
+PHASE_1_3_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 1.3] AT Protocol Data Model Extension" \
   --label "phase-1,data-model,at-protocol,critical,epic" \
@@ -195,9 +193,8 @@ See docs/AT_PROTOCOL_CUSTOM_HANDLE.md for custom domain setup
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 1.3" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 1.3")
+PHASE_1_3=$(echo "$PHASE_1_3_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_1_3}"
 
@@ -270,7 +267,7 @@ echo "=========================================="
 
 # Phase 2.1: Neo4J Repository Layer
 echo "Creating Phase 2.1 issues..."
-PHASE_2_1=$(gh issue create \
+PHASE_2_1_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 2.1] Neo4J Repository Layer & Custom Query Builder" \
   --label "phase-2,neo4j,infrastructure,critical,epic" \
@@ -290,9 +287,8 @@ Neo4J persistence layer complete
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 2.1" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 2.1")
+PHASE_2_1=$(echo "$PHASE_2_1_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_1}"
 
@@ -366,7 +362,7 @@ echo "    Created sub-issue: Add comprehensive unit tests for Neo4J repositories
 
 # Phase 2.2: PostgreSQL Repository Layer
 echo "Creating Phase 2.2 issues..."
-PHASE_2_2=$(gh issue create \
+PHASE_2_2_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 2.2] PostgreSQL Repository Layer (EF Core)" \
   --label "phase-2,postgresql,ef-core,infrastructure,critical,epic" \
@@ -385,9 +381,8 @@ Requires: Phase 1 completion
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 2.2" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 2.2")
+PHASE_2_2=$(echo "$PHASE_2_2_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_2}"
 
@@ -458,7 +453,7 @@ echo "    Created sub-issue: Add database seeding utilities"
 
 # Phase 2.3: Redis Integration
 echo "Creating Phase 2.3 issues..."
-PHASE_2_3=$(gh issue create \
+PHASE_2_3_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 2.3] Redis Integration" \
   --label "phase-2,redis,infrastructure,epic" \
@@ -474,9 +469,8 @@ Redis integration complete
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 2.3" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 2.3")
+PHASE_2_3=$(echo "$PHASE_2_3_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_3}"
 
@@ -532,7 +526,7 @@ echo "    Created sub-issue: Add session management"
 
 # Phase 2.4: Data Access Testing & Performance
 echo "Creating Phase 2.4 issues..."
-PHASE_2_4=$(gh issue create \
+PHASE_2_4_URL=$(gh issue create \
   --repo "$REPO" \
   --title "[Phase 2.4] Data Access Testing & Performance" \
   --label "phase-2,testing,performance,epic" \
@@ -551,9 +545,8 @@ Requires: Phase 2.1, 2.2, 2.3 completion
 This is a parent issue. Individual tasks are tracked in sub-issues.
 
 ## Reference
-See ROADMAP.md - Phase 2.4" \
-  --json number \
-  --jq '.number')
+See ROADMAP.md - Phase 2.4")
+PHASE_2_4=$(echo "$PHASE_2_4_URL" | sed 's/.*\///')
 
 echo "  Created parent issue #${PHASE_2_4}"
 
