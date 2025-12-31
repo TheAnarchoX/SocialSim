@@ -397,12 +397,15 @@ CREATE TABLE relationship_history (
     relationship_type VARCHAR(32) NOT NULL, -- 'FOLLOW', 'UNFOLLOW', 'BLOCK', 'UNBLOCK', 'MUTE', 'UNMUTE'
     action VARCHAR(16) NOT NULL, -- 'CREATED', 'DELETED', 'UPDATED'
     metadata JSONB,
-    occurred_at TIMESTAMP NOT NULL DEFAULT NOW()
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    archived_at TIMESTAMP -- Set when moved to cold storage (per stakeholder decision: archive after 1 year)
 );
 
 CREATE INDEX idx_relationship_history_user ON relationship_history(user_id, occurred_at DESC);
 CREATE INDEX idx_relationship_history_target ON relationship_history(target_user_id, occurred_at DESC);
 CREATE INDEX idx_relationship_history_type ON relationship_history(relationship_type, occurred_at DESC);
+CREATE INDEX idx_relationship_history_archive ON relationship_history(occurred_at) 
+WHERE archived_at IS NULL; -- Partial index for non-archived records
 
 -- User Metrics Snapshots (for tracking follower count over time)
 CREATE TABLE user_metrics_snapshots (
@@ -418,6 +421,98 @@ CREATE TABLE user_metrics_snapshots (
     
     CONSTRAINT uq_user_snapshot UNIQUE (user_id, snapshot_date)
 );
+
+-- =====================================================
+-- COMPLIANCE & CONSENT (GDPR/CCPA)
+-- =====================================================
+
+-- Consent purpose types
+CREATE TYPE consent_purpose AS ENUM (
+    'DataProcessing',       -- General data processing consent
+    'Analytics',            -- Usage analytics and metrics
+    'Personalization',      -- Personalized content and recommendations
+    'Marketing',            -- Marketing communications
+    'Research',             -- Research and simulation participation
+    'ThirdPartySharing',    -- Sharing data with third parties
+    'CrossBorderTransfer'   -- International data transfers
+);
+
+-- Consent Records (GDPR Article 7 - Conditions for consent)
+CREATE TABLE consent_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    purpose consent_purpose NOT NULL,
+    granted BOOLEAN NOT NULL,
+    consent_text TEXT NOT NULL, -- The exact text user consented to
+    consent_version VARCHAR(32) NOT NULL, -- Version of consent form
+    ip_address INET, -- For audit trail
+    user_agent TEXT, -- Browser/client info
+    granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    withdrawn_at TIMESTAMP, -- When consent was withdrawn
+    
+    CONSTRAINT uq_user_consent_purpose UNIQUE (user_id, purpose, consent_version)
+);
+
+CREATE INDEX idx_consent_user ON consent_records(user_id, granted_at DESC);
+CREATE INDEX idx_consent_purpose ON consent_records(purpose, granted);
+CREATE INDEX idx_consent_active ON consent_records(user_id, purpose) 
+WHERE granted = TRUE AND withdrawn_at IS NULL;
+
+-- Data Subject Requests (GDPR Article 15-22 - Rights of data subjects)
+CREATE TYPE data_request_type AS ENUM (
+    'Access',       -- Right of access (Art. 15)
+    'Rectification', -- Right to rectification (Art. 16)
+    'Erasure',      -- Right to erasure / "right to be forgotten" (Art. 17)
+    'Restriction',  -- Right to restriction of processing (Art. 18)
+    'Portability',  -- Right to data portability (Art. 20)
+    'Objection'     -- Right to object (Art. 21)
+);
+
+CREATE TYPE data_request_status AS ENUM (
+    'Pending',      -- Request received, not yet processed
+    'InProgress',   -- Being processed
+    'Completed',    -- Successfully completed
+    'Rejected',     -- Rejected (with reason)
+    'Expired'       -- Request expired without action
+);
+
+CREATE TABLE data_subject_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    request_type data_request_type NOT NULL,
+    status data_request_status NOT NULL DEFAULT 'Pending',
+    request_details JSONB, -- Specific details of the request
+    response_details JSONB, -- Details of how request was fulfilled
+    rejection_reason TEXT, -- If rejected, why
+    requested_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    due_by TIMESTAMP NOT NULL, -- GDPR requires response within 30 days
+    completed_at TIMESTAMP,
+    processed_by UUID REFERENCES users(id), -- Admin who processed it
+    
+    CONSTRAINT chk_due_by CHECK (due_by > requested_at)
+);
+
+CREATE INDEX idx_dsr_user ON data_subject_requests(user_id, requested_at DESC);
+CREATE INDEX idx_dsr_status ON data_subject_requests(status, due_by ASC);
+CREATE INDEX idx_dsr_pending ON data_subject_requests(due_by ASC) 
+WHERE status IN ('Pending', 'InProgress');
+
+-- Data Processing Activities Log (GDPR Article 30 - Records of processing activities)
+CREATE TABLE data_processing_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL, -- Can be NULL for system operations
+    activity_type VARCHAR(64) NOT NULL, -- e.g., 'ProfileUpdate', 'PostCreation', 'DataExport'
+    legal_basis VARCHAR(32) NOT NULL, -- 'Consent', 'Contract', 'LegitimateInterest', 'LegalObligation'
+    data_categories VARCHAR(64)[] NOT NULL, -- e.g., ['Profile', 'Content', 'Engagement']
+    purpose TEXT NOT NULL,
+    recipients VARCHAR(128)[], -- Third parties who received data
+    retention_period INTERVAL,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    metadata JSONB
+);
+
+CREATE INDEX idx_processing_log_user ON data_processing_log(user_id, occurred_at DESC);
+CREATE INDEX idx_processing_log_activity ON data_processing_log(activity_type, occurred_at DESC);
 
 CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
 CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);

@@ -739,6 +739,77 @@ WHERE f.activeFrom <= datetime($simulationTime)
 RETURN a, f, b
 ```
 
+## Graph Algorithm Scheduling Strategy
+
+**Stakeholder Decision**: Hybrid scheduling approach based on algorithm criticality.
+
+### Algorithm Schedule Configuration
+
+| Algorithm | Frequency | Priority | Resource Impact | Justification |
+|-----------|-----------|----------|-----------------|---------------|
+| **PageRank** | Every 15 minutes | Critical | Medium | Core to agent behavior decisions |
+| **WCC (Components)** | Hourly | High | Low | Detect network fragmentation quickly |
+| **Community Detection (Louvain)** | Every 4 hours | Medium | High | Communities evolve slowly |
+| **Betweenness Centrality** | Daily (02:00 UTC) | Low | Very High | Analysis metric, not real-time |
+| **Clustering Coefficient** | Daily (03:00 UTC) | Low | Medium | Network structure metric |
+| **Triangle Count** | Daily (04:00 UTC) | Low | Medium | Density analysis |
+
+### Algorithm Results Storage
+
+Store algorithm results in Neo4j node properties with metadata:
+
+```cypher
+// Store PageRank results with timestamp
+MATCH (u:User)
+WHERE u.id = $userId
+SET u.pageRankScore = $score,
+    u.pageRankComputedAt = datetime(),
+    u.pageRankVersion = $executionId
+
+// Store community assignment
+MATCH (u:User)
+WHERE u.id = $userId
+SET u.communityId = $communityId,
+    u.communityComputedAt = datetime(),
+    u.communityVersion = $executionId
+```
+
+### Invalidation Triggers
+
+Re-run algorithms early if network changes significantly:
+
+```cypher
+// Check if network changed >5% since last PageRank
+MATCH ()-[f:FOLLOWS]->()
+WHERE f.createdAt > datetime() - duration('PT15M')
+WITH count(f) AS newFollows
+
+MATCH (u:User)
+WHERE u.pageRankComputedAt IS NOT NULL
+WITH newFollows, count(u) AS totalUsers
+
+RETURN newFollows > (totalUsers * 0.05) AS shouldInvalidate
+```
+
+### On-Demand Execution
+
+Allow manual triggering for analysis scenarios:
+
+```cypher
+// Example: Force PageRank recalculation for scenario analysis
+CALL gds.pageRank.write('social-network', {
+  writeProperty: 'pageRankScore',
+  maxIterations: 20,
+  dampingFactor: 0.85
+})
+YIELD nodePropertiesWritten, ranIterations, computeMillis
+
+// Update metadata
+MATCH (u:User)
+SET u.pageRankComputedAt = datetime(),
+    u.pageRankVersion = $manualExecutionId
+```
+
 ## Next Steps
 
 See [postgresql-schema.sql](./postgresql-schema.sql) for the relational database schema that complements this graph model.

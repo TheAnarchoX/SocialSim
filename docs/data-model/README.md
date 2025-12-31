@@ -23,7 +23,8 @@ This directory contains the comprehensive data model design for SocialSim's soci
 ### Project Management
 - [Migration Plan](./migration-plan.md) - Database migration and deployment strategy
 - [Sample Data](./sample-data.md) - Sample data for testing and development
-- [Stakeholder Review](./STAKEHOLDER_REVIEW.md) - **Phase 1.1 completion summary and sign-off**
+- [Stakeholder Review](./STAKEHOLDER_REVIEW.md) - **Phase 1.1 completion summary and sign-off** ✅ APPROVED
+- [Data Governance](./DATA_GOVERNANCE.md) - Data retention, compliance, and privacy policies (GDPR/CCPA)
 
 ## Key Design Principles
 
