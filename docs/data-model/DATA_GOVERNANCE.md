@@ -255,7 +255,7 @@ Track and report:
 - Support: support.socialsim.example.com/privacy
 
 **Supervisory Authority** (for EU users):
-- [Applicable EU DPA based on establishment location]
+- EU users may contact the data protection authority in their country of residence, place of work, or place of the alleged infringement. The competent supervisory authority for SocialSim will be determined based on the location of its main establishment in the EU and will be communicated in updated versions of this policy where applicable.
 
 ---
 

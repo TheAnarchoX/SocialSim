@@ -440,17 +440,20 @@ CREATE TYPE consent_purpose AS ENUM (
 -- Consent Records (GDPR Article 7 - Conditions for consent)
 CREATE TABLE consent_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     purpose consent_purpose NOT NULL,
     granted BOOLEAN NOT NULL,
     consent_text TEXT NOT NULL, -- The exact text user consented to
     consent_version VARCHAR(32) NOT NULL, -- Version of consent form
+    -- IP addresses are considered personal data under GDPR. Stored for audit trail and fraud prevention (legitimate interest basis).
+    -- Retention: IP addresses are anonymized after 90 days or deleted upon user request.
+    -- Included in data exports per GDPR Art. 20 (right to data portability).
     ip_address INET, -- For audit trail
     user_agent TEXT, -- Browser/client info
     granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
     withdrawn_at TIMESTAMP, -- When consent was withdrawn
     
-    CONSTRAINT uq_user_consent_purpose UNIQUE (user_id, purpose, consent_version)
+    CONSTRAINT uq_user_consent_purpose_version UNIQUE (user_id, purpose, consent_version)
 );
 
 CREATE INDEX idx_consent_user ON consent_records(user_id, granted_at DESC);
@@ -478,7 +481,7 @@ CREATE TYPE data_request_status AS ENUM (
 
 CREATE TABLE data_subject_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     request_type data_request_type NOT NULL,
     status data_request_status NOT NULL DEFAULT 'Pending',
     request_details JSONB, -- Specific details of the request
