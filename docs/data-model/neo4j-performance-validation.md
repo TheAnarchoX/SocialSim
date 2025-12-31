@@ -457,7 +457,8 @@ def generate_test_network(driver, num_users=10000, avg_follows_per_user=100):
         """)
 
 # Usage
-driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "$NEO4J_PASSWORD"))
+import os
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", os.getenv("NEO4J_PASSWORD")))
 generate_test_network(driver, num_users=100000, avg_follows_per_user=100)
 driver.close()
 ```
