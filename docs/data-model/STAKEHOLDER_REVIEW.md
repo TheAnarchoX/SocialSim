@@ -170,6 +170,27 @@ The comprehensive social network data model for SocialSim has been designed, doc
 9. **[neo4j-performance-validation.md](./docs/data-model/neo4j-performance-validation.md)** - Query validation, algorithm testing, benchmarking procedures
 10. **[postgresql-performance-validation.md](./docs/data-model/postgresql-performance-validation.md)** - Index strategy, sample queries, constraint testing
 
+---
+
+## Phase 1.3 Addendum - AT Protocol Data Model Extension
+
+**Date**: December 31, 2025  
+**Phase**: 1.3 AT Protocol Data Model Extension  
+**Status**: ✅ Documented (Data Models Only)
+
+### What was added
+
+- Explicit AT Protocol primitives modeling: DID/handle/repo/record/rkey/CID.
+- Handle verification and caching state model (DNS TXT + HTTPS well-known).
+- Federation source, sync cursor/checkpoint, and commit log models (data-only).
+- PostgreSQL schema extensions in `docs/data-model/postgresql-schema.sql` for AT protocol tables, constraints, and indexes.
+
+### New Phase 1.3 docs
+
+- `docs/data-model/at-protocol-primitives.md`
+- `docs/data-model/at-protocol-handle-resolution.md`
+- `docs/data-model/at-protocol-federation-model.md`
+
 ## Open Questions for Stakeholder Review
 
 ### 1. Temporal Data Retention

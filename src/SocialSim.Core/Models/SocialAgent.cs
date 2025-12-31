@@ -77,4 +77,29 @@ public class AgentBehavior
     /// Topics of interest for content generation
     /// </summary>
     public List<string> Interests { get; set; } = new();
+
+    /// <summary>
+    /// Personality, opinions, and sentiment configuration.
+    /// </summary>
+    public AgentPersonality Personality { get; set; } = new();
+
+    /// <summary>
+    /// Time-of-day and session-level activity modeling.
+    /// </summary>
+    public ActivityPattern ActivityPattern { get; set; } = new();
+
+    /// <summary>
+    /// Content creation and consumption preferences.
+    /// </summary>
+    public ContentPreferences ContentPreferences { get; set; } = new();
+
+    /// <summary>
+    /// Social graph interaction tendencies.
+    /// </summary>
+    public SocialBehaviorProfile SocialBehavior { get; set; } = new();
+
+    /// <summary>
+    /// Susceptibility to influence, trends, and opinion change.
+    /// </summary>
+    public InfluenceSusceptibilityProfile InfluenceSusceptibility { get; set; } = new();
 }

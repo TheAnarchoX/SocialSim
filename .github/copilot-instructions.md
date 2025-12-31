@@ -68,6 +68,16 @@ Domain models include AT Protocol fields for Bluesky compatibility:
 - Connection types: `Follow`, `Friend`, `Block`, `Mute` (see `ConnectionType` enum)
 - All agents use custom domain handles via `ATProtocolOptions.HandleFormat`
 
+### Documentation Hygiene (Always)
+
+- When adding or renaming model docs under `docs/` (especially `docs/data-model/`), also update the relevant index files so the change is reflected:
+    - `docs/data-model/README.md` (primary index)
+    - Any phase milestone docs (e.g., `docs/data-model/STAKEHOLDER_REVIEW.md`) if applicable
+- When adding new persisted entities/tables, keep the documentation trio consistent:
+    - C# model classes in `src/SocialSim.Core/Models/`
+    - Schema docs in `docs/data-model/postgresql-schema.sql`
+    - The `docs/data-model/README.md` link list
+
 ## Configuration
 
 Neo4j password must be set in `appsettings.Development.json`:

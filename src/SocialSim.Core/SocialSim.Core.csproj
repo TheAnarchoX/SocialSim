@@ -8,4 +8,8 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" Version="5.28.4" />
+  </ItemGroup>
+
 </Project>

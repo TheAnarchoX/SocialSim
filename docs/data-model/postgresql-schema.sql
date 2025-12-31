@@ -36,6 +36,14 @@ CREATE TYPE notification_level AS ENUM ('All', 'Mentions', 'None');
 CREATE TYPE dm_setting AS ENUM ('All', 'FollowersOnly', 'MutualFollows', 'None');
 CREATE TYPE mention_setting AS ENUM ('All', 'FollowersOnly', 'None');
 
+-- AT Protocol modeling (Phase 1.3)
+CREATE TYPE atproto_verification_status AS ENUM ('Pending', 'Verified', 'Expired', 'Failed');
+CREATE TYPE atproto_verification_method AS ENUM ('DnsTxt', 'WellKnown');
+CREATE TYPE atproto_repository_status AS ENUM ('Active', 'Suspended', 'Tombstoned');
+CREATE TYPE atproto_federation_source_kind AS ENUM ('PDS', 'AppView', 'Other');
+CREATE TYPE atproto_sync_status AS ENUM ('Active', 'Paused', 'Failed');
+CREATE TYPE atproto_commit_status AS ENUM ('Received', 'Processed', 'Failed');
+
 -- =====================================================
 -- CORE ENTITIES
 -- =====================================================
@@ -174,6 +182,173 @@ CREATE TABLE post_media (
     display_order INTEGER NOT NULL DEFAULT 0,
     
     PRIMARY KEY (post_id, media_id)
+);
+
+-- =====================================================
+-- AT PROTOCOL (PHASE 1.3)
+-- =====================================================
+
+-- Canonical AT identity for a DID (optionally linked to a local user/agent)
+CREATE TABLE atproto_identities (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    did VARCHAR(256) UNIQUE NOT NULL,
+    primary_handle VARCHAR(128),
+    protocol_type protocol_type NOT NULL DEFAULT 'ATProtocol',
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    is_simulated BOOLEAN NOT NULL DEFAULT FALSE,
+    verification_status atproto_verification_status NOT NULL DEFAULT 'Pending',
+    verified_at TIMESTAMP,
+    last_checked_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    -- Free-form storage for DID documents, generation metadata, etc.
+    metadata JSONB,
+
+    CONSTRAINT chk_atproto_identity_did_lowercase CHECK (did = LOWER(did)),
+    CONSTRAINT chk_atproto_identity_primary_handle_lowercase CHECK (
+        primary_handle IS NULL OR primary_handle = LOWER(primary_handle)
+    ),
+    CONSTRAINT chk_atproto_identity_verified_at CHECK (
+        (verification_status = 'Verified' AND verified_at IS NOT NULL) OR
+        (verification_status <> 'Verified')
+    )
+);
+
+-- Handle rows (many per DID, one primary)
+CREATE TABLE atproto_handles (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    handle VARCHAR(128) UNIQUE NOT NULL,
+    did VARCHAR(256) NOT NULL REFERENCES atproto_identities(did) ON DELETE CASCADE,
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+    verification_method atproto_verification_method NOT NULL,
+    verification_status atproto_verification_status NOT NULL DEFAULT 'Pending',
+    ttl_seconds INTEGER,
+    last_checked_at TIMESTAMP,
+    next_check_at TIMESTAMP,
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    consecutive_failure_count INTEGER NOT NULL DEFAULT 0,
+    last_failure_code VARCHAR(64),
+    last_failure_reason TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT chk_atproto_handle_lowercase CHECK (handle = LOWER(handle)),
+    CONSTRAINT chk_atproto_handle_attempt_count CHECK (attempt_count >= 0),
+    CONSTRAINT chk_atproto_handle_failure_count CHECK (consecutive_failure_count >= 0)
+);
+
+-- Repository metadata (per DID)
+CREATE TABLE atproto_repositories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    did VARCHAR(256) UNIQUE NOT NULL REFERENCES atproto_identities(did) ON DELETE CASCADE,
+    pds_endpoint VARCHAR(512) NOT NULL,
+    status atproto_repository_status NOT NULL DEFAULT 'Active',
+    head_cid VARCHAR(256),
+    rev VARCHAR(128),
+    last_commit_seq BIGINT,
+    last_commit_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    metadata JSONB,
+
+    CONSTRAINT chk_atproto_repo_pds_endpoint_nonempty CHECK (LENGTH(TRIM(pds_endpoint)) > 0)
+);
+
+-- Records (extensible: JSONB payload) - one row per (did, collection, rkey)
+CREATE TABLE atproto_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    did VARCHAR(256) NOT NULL REFERENCES atproto_identities(did) ON DELETE CASCADE,
+    collection_nsid VARCHAR(256) NOT NULL,
+    rkey VARCHAR(128) NOT NULL,
+    cid VARCHAR(256) NOT NULL,
+    record_type VARCHAR(256),
+    payload JSONB NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+
+    CONSTRAINT uq_atproto_record UNIQUE (did, collection_nsid, rkey),
+    CONSTRAINT chk_atproto_record_collection_nonempty CHECK (LENGTH(TRIM(collection_nsid)) > 0),
+    CONSTRAINT chk_atproto_record_rkey_nonempty CHECK (LENGTH(TRIM(rkey)) > 0),
+    CONSTRAINT chk_atproto_record_deleted_at CHECK (
+        (is_deleted = TRUE AND deleted_at IS NOT NULL) OR
+        (is_deleted = FALSE)
+    )
+);
+
+-- Optional schema registry for lexicon-like validation
+CREATE TABLE atproto_lexicon_schemas (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nsid VARCHAR(256) NOT NULL,
+    version VARCHAR(64) NOT NULL,
+    schema JSONB NOT NULL,
+    sha256 VARCHAR(64),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_atproto_lexicon_schema UNIQUE (nsid, version),
+    CONSTRAINT chk_atproto_lexicon_nsid_nonempty CHECK (LENGTH(TRIM(nsid)) > 0),
+    CONSTRAINT chk_atproto_lexicon_version_nonempty CHECK (LENGTH(TRIM(version)) > 0)
+);
+
+-- Federation sources (PDS/AppView/other)
+CREATE TABLE atproto_federation_sources (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    kind atproto_federation_source_kind NOT NULL,
+    name VARCHAR(256),
+    service_endpoint VARCHAR(512) NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    allow_ingest BOOLEAN NOT NULL DEFAULT TRUE,
+    deny_reason TEXT,
+    rate_limit_per_minute INTEGER,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    metadata JSONB,
+
+    CONSTRAINT chk_atproto_source_endpoint_nonempty CHECK (LENGTH(TRIM(service_endpoint)) > 0),
+    CONSTRAINT chk_atproto_source_rate_limit CHECK (rate_limit_per_minute IS NULL OR rate_limit_per_minute >= 0)
+);
+
+-- Sync state / cursor per source + repo
+CREATE TABLE atproto_sync_state (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    source_id UUID NOT NULL REFERENCES atproto_federation_sources(id) ON DELETE CASCADE,
+    did VARCHAR(256) REFERENCES atproto_identities(did) ON DELETE CASCADE,
+    status atproto_sync_status NOT NULL DEFAULT 'Active',
+    cursor VARCHAR(256),
+    last_seq BIGINT,
+    last_commit_cid VARCHAR(256),
+    last_success_at TIMESTAMP,
+    last_attempt_at TIMESTAMP,
+    next_attempt_at TIMESTAMP,
+    failure_count INTEGER NOT NULL DEFAULT 0,
+    failure_reason TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_atproto_sync UNIQUE (source_id, did),
+    CONSTRAINT chk_atproto_sync_failure_count CHECK (failure_count >= 0)
+);
+
+-- Commit log (append-only by convention)
+CREATE TABLE atproto_commit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    source_id UUID REFERENCES atproto_federation_sources(id) ON DELETE SET NULL,
+    did VARCHAR(256) REFERENCES atproto_identities(did) ON DELETE SET NULL,
+    seq BIGINT NOT NULL,
+    commit_cid VARCHAR(256) NOT NULL,
+    prev_cid VARCHAR(256),
+    operations JSONB NOT NULL,
+    status atproto_commit_status NOT NULL DEFAULT 'Received',
+    received_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    processed_at TIMESTAMP,
+    failure_reason TEXT,
+
+    CONSTRAINT chk_atproto_commit_seq CHECK (seq >= 0)
 );
 
 -- =====================================================
@@ -426,6 +601,184 @@ CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot
 CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
 
 -- =====================================================
+-- SIMULATION (PHASE 1.2)
+-- =====================================================
+
+CREATE TYPE simulation_run_status AS ENUM (
+    'Created',
+    'Running',
+    'Paused',
+    'Stopped',
+    'Completed',
+    'Failed'
+);
+
+CREATE TYPE checkpoint_format AS ENUM ('Json', 'MessagePack', 'Custom');
+
+CREATE TYPE scenario_type AS ENUM ('Viral', 'Marketing', 'Crisis', 'Custom');
+CREATE TYPE campaign_type AS ENUM ('PromotedPost', 'InfluencerActivation', 'ABTest');
+
+-- Reusable simulation configuration templates
+CREATE TABLE simulation_configurations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(256) NOT NULL,
+    version VARCHAR(32) NOT NULL DEFAULT '1.0',
+    seed BIGINT NOT NULL,
+
+    -- Config blocks stored as JSONB for schema stability and extensibility
+    time_config JSONB NOT NULL,
+    population_config JSONB NOT NULL,
+    topology_config JSONB NOT NULL,
+    termination_config JSONB NOT NULL,
+
+    -- Optional activation lists
+    scenario_ids UUID[],
+    campaign_ids UUID[],
+
+    created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_simulation_configuration_name_version UNIQUE (name, version),
+    CONSTRAINT chk_simulation_seed CHECK (seed <> 0)
+);
+
+CREATE INDEX idx_simulation_configurations_name ON simulation_configurations(name);
+CREATE INDEX idx_simulation_configurations_updated ON simulation_configurations(updated_at DESC);
+CREATE INDEX idx_simulation_configurations_scenarios_gin ON simulation_configurations USING GIN (scenario_ids);
+CREATE INDEX idx_simulation_configurations_campaigns_gin ON simulation_configurations USING GIN (campaign_ids);
+
+-- Individual execution of a configuration
+CREATE TABLE simulation_runs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    configuration_id UUID NOT NULL REFERENCES simulation_configurations(id) ON DELETE RESTRICT,
+    status simulation_run_status NOT NULL DEFAULT 'Created',
+
+    started_at TIMESTAMP,
+    ended_at TIMESTAMP,
+
+    current_tick BIGINT NOT NULL DEFAULT 0,
+    current_simulated_time TIMESTAMP,
+    active_agent_count INTEGER NOT NULL DEFAULT 0,
+
+    last_error TEXT,
+
+    -- Run-time metadata (host, build version, worker instance id, etc.)
+    metadata JSONB,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT chk_run_tick CHECK (current_tick >= 0),
+    CONSTRAINT chk_active_agents CHECK (active_agent_count >= 0),
+    CONSTRAINT chk_run_end_after_start CHECK (ended_at IS NULL OR started_at IS NULL OR ended_at >= started_at)
+);
+
+CREATE INDEX idx_simulation_runs_config ON simulation_runs(configuration_id, created_at DESC);
+CREATE INDEX idx_simulation_runs_status ON simulation_runs(status, updated_at DESC);
+CREATE INDEX idx_simulation_runs_started ON simulation_runs(started_at DESC);
+
+-- Durable checkpoint/snapshot pointers
+CREATE TABLE simulation_checkpoints (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    run_id UUID NOT NULL REFERENCES simulation_runs(id) ON DELETE CASCADE,
+    tick BIGINT NOT NULL,
+    format checkpoint_format NOT NULL DEFAULT 'Json',
+
+    -- Pointer to serialized state (URI/blob id/large-object reference)
+    state_pointer TEXT NOT NULL,
+    checksum_sha256 CHAR(64),
+    size_bytes BIGINT,
+    diff_from_checkpoint_id UUID REFERENCES simulation_checkpoints(id) ON DELETE SET NULL,
+
+    notes TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_checkpoint_run_tick UNIQUE (run_id, tick),
+    CONSTRAINT chk_checkpoint_tick CHECK (tick >= 0),
+    CONSTRAINT chk_checkpoint_size CHECK (size_bytes IS NULL OR size_bytes >= 0)
+);
+
+CREATE INDEX idx_simulation_checkpoints_run ON simulation_checkpoints(run_id, tick DESC);
+CREATE INDEX idx_simulation_checkpoints_created ON simulation_checkpoints(created_at DESC);
+
+-- Scenario definitions
+CREATE TABLE scenarios (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(256) NOT NULL,
+    version VARCHAR(32) NOT NULL DEFAULT '1.0',
+    scenario_type scenario_type NOT NULL DEFAULT 'Custom',
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    description TEXT,
+
+    -- YAML/JSON scenario DSL stored as JSONB
+    definition JSONB NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_scenario_name_version UNIQUE (name, version)
+);
+
+CREATE INDEX idx_scenarios_type ON scenarios(scenario_type, updated_at DESC);
+CREATE INDEX idx_scenarios_enabled ON scenarios(enabled) WHERE enabled = TRUE;
+
+-- Campaign definitions (marketing)
+CREATE TABLE campaigns (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(256) NOT NULL,
+    version VARCHAR(32) NOT NULL DEFAULT '1.0',
+    campaign_type campaign_type NOT NULL DEFAULT 'PromotedPost',
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    description TEXT,
+
+    -- Campaign DSL stored as JSONB (targeting, budget, variants, constraints)
+    definition JSONB NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_campaign_name_version UNIQUE (name, version)
+);
+
+CREATE INDEX idx_campaigns_type ON campaigns(campaign_type, updated_at DESC);
+CREATE INDEX idx_campaigns_enabled ON campaigns(enabled) WHERE enabled = TRUE;
+
+-- Time-series metrics sampled from a run
+CREATE TABLE simulation_metrics (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    run_id UUID NOT NULL REFERENCES simulation_runs(id) ON DELETE CASCADE,
+    tick BIGINT NOT NULL,
+    observed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    active_agents INTEGER NOT NULL DEFAULT 0,
+    posts_created INTEGER NOT NULL DEFAULT 0,
+
+    -- Engagement counters (denormalized for fast dashboards)
+    likes INTEGER NOT NULL DEFAULT 0,
+    reposts INTEGER NOT NULL DEFAULT 0,
+    replies INTEGER NOT NULL DEFAULT 0,
+    quotes INTEGER NOT NULL DEFAULT 0,
+
+    -- Heavier/optional structures as JSONB
+    network JSONB,
+    sentiment JSONB,
+    trending_topics JSONB,
+    custom JSONB,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_simulation_metrics_run_tick UNIQUE (run_id, tick),
+    CONSTRAINT chk_metrics_tick CHECK (tick >= 0),
+    CONSTRAINT chk_metrics_counts CHECK (
+        active_agents >= 0 AND posts_created >= 0 AND likes >= 0 AND reposts >= 0 AND replies >= 0 AND quotes >= 0
+    )
+);
+
+CREATE INDEX idx_simulation_metrics_run_tick ON simulation_metrics(run_id, tick DESC);
+CREATE INDEX idx_simulation_metrics_observed ON simulation_metrics(observed_at DESC);
+
+-- =====================================================
 -- COMPLIANCE & CONSENT (GDPR/CCPA)
 -- =====================================================
 
@@ -533,6 +886,40 @@ CREATE INDEX idx_processing_log_activity ON data_processing_log(activity_type, o
 -- =====================================================
 -- INDEXES
 -- =====================================================
+
+-- AT Protocol
+CREATE UNIQUE INDEX uq_atproto_handles_primary_per_did
+ON atproto_handles(did)
+WHERE is_primary = TRUE;
+
+CREATE INDEX idx_atproto_identities_status
+ON atproto_identities(verification_status, created_at DESC);
+
+CREATE INDEX idx_atproto_handles_did
+ON atproto_handles(did, verification_status, last_checked_at DESC);
+
+CREATE INDEX idx_atproto_repositories_status
+ON atproto_repositories(status, updated_at DESC);
+
+CREATE INDEX idx_atproto_records_collection_created
+ON atproto_records(collection_nsid, created_at DESC);
+
+CREATE INDEX idx_atproto_records_did_collection
+ON atproto_records(did, collection_nsid, created_at DESC);
+
+CREATE INDEX idx_atproto_records_active
+ON atproto_records(did, collection_nsid, created_at DESC)
+WHERE is_deleted = FALSE;
+
+CREATE INDEX idx_atproto_sync_source_status
+ON atproto_sync_state(source_id, status, next_attempt_at ASC);
+
+CREATE INDEX idx_atproto_commit_source_did_seq
+ON atproto_commit_log(source_id, did, seq DESC);
+
+CREATE UNIQUE INDEX uq_atproto_lexicon_active_per_nsid
+ON atproto_lexicon_schemas(nsid)
+WHERE is_active = TRUE;
 
 -- Users
 CREATE INDEX idx_users_handle ON users(handle);
@@ -659,6 +1046,15 @@ COMMENT ON TABLE posts IS 'User-generated content';
 COMMENT ON TABLE follows IS 'Follower relationships between users';
 COMMENT ON TABLE likes IS 'User reactions to posts';
 COMMENT ON TABLE threads IS 'Conversation threads';
+
+COMMENT ON TABLE atproto_identities IS 'Canonical AT Protocol identities (DIDs) and linkage to local users';
+COMMENT ON TABLE atproto_handles IS 'Handle to DID mappings with verification state and caching metadata';
+COMMENT ON TABLE atproto_repositories IS 'Repository metadata per DID (PDS endpoint, head CID, rev)';
+COMMENT ON TABLE atproto_records IS 'AT Protocol records (collection, rkey, cid, JSON payload)';
+COMMENT ON TABLE atproto_lexicon_schemas IS 'Optional schema registry for lexicon-like validation';
+COMMENT ON TABLE atproto_federation_sources IS 'External federation sources (PDS/AppView) and trust policy fields';
+COMMENT ON TABLE atproto_sync_state IS 'Sync cursors/checkpoints per federation source and repo';
+COMMENT ON TABLE atproto_commit_log IS 'Commit log entries received from federation sources (append-only by convention)';
 
 -- =====================================================
 -- END OF SCHEMA

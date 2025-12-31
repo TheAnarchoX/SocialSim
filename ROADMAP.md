@@ -15,161 +15,161 @@ This roadmap outlines the development plan for SocialSim, organized into phases 
 ---
 
 ## Phase 1: Data Foundation
-**Priority**: Critical | **Status**: 🔵 In Progress | **Blocks**: All other phases
+**Priority**: Critical | **Status**: 🟢 Done | **Blocks**: All other phases
 
 This phase establishes the core data models that everything else builds upon. Getting this right is critical to avoid costly refactoring later.
 
 ### 1.1 Social Network Data Model Design
-- [x] Design comprehensive entity relationship diagram (ERD) for social network
-  - [x] Define core entities (Users, Posts, Comments, Reactions, Media)
-  - [x] Define relationship types (Follow, Block, Mute, Report)
-  - [x] Design engagement models (Likes, Shares, Quotes, Bookmarks)
-  - [x] Model content hierarchies (Threads, Conversations, Quote chains)
-  - [x] Design privacy & visibility rules (Public, Followers-only, Private, Mentions)
-- [x] Review and optimize graph data model for Neo4J
-  - [x] Define node types and properties (User, Post, Thread)
-  - [x] Define relationship types and weights (FOLLOWS, LIKES, POSTS, etc.)
-  - [x] Design indexes for performance
-  - [x] Review temporal data strategy (relationship history, follower count over time)
-  - [x] Validate graph queries for performance
-  - [x] Test graph algorithms (PageRank, community detection)
-- [x] Review and optimize relational schema for PostgreSQL
-  - [x] Normalize data for consistency (3NF for core entities)
-  - [x] Plan denormalization for performance (cached counts, materialized paths)
-  - [x] Design audit/history tables (visibility audit, change tracking)
-  - [x] Define database constraints and triggers (FK constraints, updated_at triggers)
-  - [x] Review indexing strategy for query patterns
-  - [x] Validate schema with sample queries
-  - [x] Test database constraints and business rules
-- [x] Document and validate data model
-  - [x] Document data model with examples and use cases
-  - [x] Review and validate with stakeholders
-- [x] **Milestone**: Data model approved and documented ✅ (December 31, 2025)
+- [x] 1.1.1 Design comprehensive entity relationship diagram (ERD) for social network
+  - [x] 1.1.1.1 Define core entities (Users, Posts, Comments, Reactions, Media)
+  - [x] 1.1.1.2 Define relationship types (Follow, Block, Mute, Report)
+  - [x] 1.1.1.3 Design engagement models (Likes, Shares, Quotes, Bookmarks)
+  - [x] 1.1.1.4 Model content hierarchies (Threads, Conversations, Quote chains)
+  - [x] 1.1.1.5 Design privacy & visibility rules (Public, Followers-only, Private, Mentions)
+- [x] 1.1.2 Review and optimize graph data model for Neo4J
+  - [x] 1.1.2.1 Define node types and properties (User, Post, Thread)
+  - [x] 1.1.2.2 Define relationship types and weights (FOLLOWS, LIKES, POSTS, etc.)
+  - [x] 1.1.2.3 Design indexes for performance
+  - [x] 1.1.2.4 Review temporal data strategy (relationship history, follower count over time)
+  - [x] 1.1.2.5 Validate graph queries for performance
+  - [x] 1.1.2.6 Test graph algorithms (PageRank, community detection)
+- [x] 1.1.3 Review and optimize relational schema for PostgreSQL
+  - [x] 1.1.3.1 Normalize data for consistency (3NF for core entities)
+  - [x] 1.1.3.2 Plan denormalization for performance (cached counts, materialized paths)
+  - [x] 1.1.3.3 Design audit/history tables (visibility audit, change tracking)
+  - [x] 1.1.3.4 Define database constraints and triggers (FK constraints, updated_at triggers)
+  - [x] 1.1.3.5 Review indexing strategy for query patterns
+  - [x] 1.1.3.6 Validate schema with sample queries
+  - [x] 1.1.3.7 Test database constraints and business rules
+- [x] 1.1.4 Document and validate data model
+  - [x] 1.1.4.1 Document data model with examples and use cases
+  - [x] 1.1.4.2 Review and validate with stakeholders
+- [x] 1.1.5 **Milestone**: Data model approved and documented ✅ (December 31, 2025)
 
 ### 1.2 Simulation Data Model Design
-- [ ] Design agent behavior models
-  - [ ] Personality traits (Introvert/Extrovert, Positive/Negative sentiment)
-  - [ ] Activity patterns (Time of day, frequency distributions)
-  - [ ] Content preferences (Topics, media types, length)
-  - [ ] Social behavior (Follower strategy, engagement style)
-  - [ ] Influence susceptibility (How easily swayed by trends/influencers)
-- [ ] Design simulation state models
-  - [ ] Simulation configuration (Time scale, number of agents, scenarios)
-  - [ ] Real-time metrics (Active users, posts/min, engagement rates)
-  - [ ] Historical snapshots (Periodic state saves)
-- [ ] Design event models
-  - [ ] Event taxonomy (Social, Content, System events)
-  - [ ] Event metadata (Timestamp, source, causality chain)
-  - [ ] Event aggregation patterns
-- [ ] Design scenario & campaign models
-  - [ ] Viral event configurations (Trending topics, memes)
-  - [ ] Marketing campaigns (Promoted content, influencer activations)
-  - [ ] Crisis simulations (Misinformation spread, coordinated attacks)
-- [ ] **Milestone**: Simulation model approved and documented
+- [x] 1.2.1 Design agent behavior models
+  - [x] 1.2.1.1 Personality traits (Introvert/Extrovert, Positive/Negative sentiment)
+  - [x] 1.2.1.2 Activity patterns (Time of day, frequency distributions)
+  - [x] 1.2.1.3 Content preferences (Topics, media types, length)
+  - [x] 1.2.1.4 Social behavior (Follower strategy, engagement style)
+  - [x] 1.2.1.5 Influence susceptibility (How easily swayed by trends/influencers)
+- [x] 1.2.2 Design simulation state models
+  - [x] 1.2.2.1 Simulation configuration (Time scale, number of agents, scenarios)
+  - [x] 1.2.2.2 Real-time metrics (Active users, posts/min, engagement rates)
+  - [x] 1.2.2.3 Historical snapshots (Periodic state saves)
+- [x] 1.2.3 Design event models
+  - [x] 1.2.3.1 Event taxonomy (Social, Content, System events)
+  - [x] 1.2.3.2 Event metadata (Timestamp, source, causality chain)
+  - [x] 1.2.3.3 Event aggregation patterns
+- [x] 1.2.4 Design scenario & campaign models
+  - [x] 1.2.4.1 Viral event configurations (Trending topics, memes)
+  - [x] 1.2.4.2 Marketing campaigns (Promoted content, influencer activations)
+  - [x] 1.2.4.3 Crisis simulations (Misinformation spread, coordinated attacks)
+- [x] 1.2.5 **Milestone**: Simulation model approved and documented ✅ (December 31, 2025)
 
 ### 1.3 AT Protocol Data Model Extension
-- [ ] Map AT Protocol primitives to internal models
-  - [ ] DID (Decentralized Identifiers) integration
-  - [ ] Handle resolution and verification (DNS TXT and HTTPS well-known)
-  - [ ] Custom domain handle support (e.g., @theanarchox.net)
-  - [ ] Repository structure (Collections, Records)
-  - [ ] Content addressing (CIDs, rkeys)
-  - [ ] Lexicon definitions for custom record types
-- [ ] Design AT Protocol repository layout
-  - [ ] Collection schemas (posts, likes, follows, blocks, etc.)
-  - [ ] Record versioning and history
-  - [ ] Blob storage for media
-- [ ] Design federation models
-  - [ ] PDS (Personal Data Server) metadata
-  - [ ] Cross-instance references
-  - [ ] Synchronization state
-- [ ] Design custom domain handle configuration
-  - [ ] Domain-to-DID mapping schema
-  - [ ] Handle generation patterns for simulation agents
-  - [ ] Multi-domain support for different agent types
-- [ ] **Milestone**: AT Protocol model extensions documented
+- [x] 1.3.1 Map AT Protocol primitives to internal models
+  - [x] 1.3.1.1 DID (Decentralized Identifiers) integration
+  - [x] 1.3.1.2 Handle resolution and verification (DNS TXT and HTTPS well-known)
+  - [x] 1.3.1.3 Custom domain handle support (e.g., @theanarchox.net)
+  - [x] 1.3.1.4 Repository structure (Collections, Records)
+  - [x] 1.3.1.5 Content addressing (CIDs, rkeys)
+  - [x] 1.3.1.6 Lexicon definitions for custom record types
+- [x] 1.3.2 Design AT Protocol repository layout
+  - [x] 1.3.2.1 Collection schemas (posts, likes, follows, blocks, etc.)
+  - [x] 1.3.2.2 Record versioning and history (modeled via commit log + JSONB payload)
+  - [x] 1.3.2.3 Blob storage for media (data model hooks only)
+- [x] 1.3.3 Design federation models
+  - [x] 1.3.3.1 PDS (Personal Data Server) metadata
+  - [x] 1.3.3.2 Cross-instance references
+  - [x] 1.3.3.3 Synchronization state
+- [x] 1.3.4 Design custom domain handle configuration
+  - [x] 1.3.4.1 Domain-to-DID mapping schema
+  - [x] 1.3.4.2 Handle generation patterns for simulation agents
+  - [x] 1.3.4.3 Multi-domain support for different agent types
+- [x] 1.3.5 **Milestone**: AT Protocol model extensions documented ✅ (December 31, 2025)
 
 **Phase 1 Output**: Comprehensive data model documentation with ERDs, schemas, and examples
 
 ---
 
 ## Phase 2: Storage & Persistence Layer
-**Priority**: Critical | **Status**: ⚪ Not Started | **Blocks**: Phases 3, 4, 5
+**Priority**: Critical | **Status**: 🟡 In Progress | **Blocks**: Phases 3, 4, 5
 
 ### 2.1 Neo4J Repository Layer
-- [ ] Build custom query builder for Neo4J
-  - [ ] Fluent API for Cypher query construction
-  - [ ] Type-safe node and relationship builders
-  - [ ] Support for complex pattern matching
-  - [ ] Query optimization helpers
-- [ ] Implement generic repository pattern for graph data
-  - [ ] CRUD operations for nodes
-  - [ ] Relationship management (create, delete, update weights)
-  - [ ] Traversal operations (shortest path, degree of separation)
-  - [ ] Batch operations for performance
-- [ ] Create specialized repositories
-  - [ ] SocialGraphRepository (follow graph operations)
-  - [ ] InfluenceRepository (influence calculation and caching)
-  - [ ] CommunityRepository (community detection)
-  - [ ] EngagementRepository (content interaction patterns)
-- [ ] Implement caching layer over Neo4J
-  - [ ] Redis-backed cache for hot paths
-  - [ ] Cache invalidation strategies
-  - [ ] Read-through/write-through patterns
-- [ ] Add comprehensive unit tests for repositories
-- [ ] **Milestone**: Neo4J persistence layer complete
+- [x] 2.1.1 Build custom query builder for Neo4J
+  - [x] 2.1.1.1 Fluent API for Cypher query construction
+  - [x] 2.1.1.2 Type-safe node and relationship builders
+  - [x] 2.1.1.3 Support for complex pattern matching
+  - [x] 2.1.1.4 Query optimization helpers
+- [x] 2.1.2 Implement generic repository pattern for graph data
+  - [x] 2.1.2.1 CRUD operations for nodes
+  - [x] 2.1.2.2 Relationship management (create, delete, update weights)
+  - [x] 2.1.2.3 Traversal operations (shortest path, degree of separation)
+  - [x] 2.1.2.4 Batch operations for performance
+- [ ] 2.1.3 Create specialized repositories
+  - [ ] 2.1.3.1 SocialGraphRepository (follow graph operations)
+  - [ ] 2.1.3.2 InfluenceRepository (influence calculation and caching)
+  - [ ] 2.1.3.3 CommunityRepository (community detection)
+  - [ ] 2.1.3.4 EngagementRepository (content interaction patterns)
+- [ ] 2.1.4 Implement caching layer over Neo4J
+  - [ ] 2.1.4.1 Redis-backed cache for hot paths
+  - [ ] 2.1.4.2 Cache invalidation strategies
+  - [ ] 2.1.4.3 Read-through/write-through patterns
+- [ ] 2.1.5 Add comprehensive unit tests for repositories
+- [ ] 2.1.6 **Milestone**: Neo4J persistence layer complete
 
 ### 2.2 PostgreSQL Repository Layer (EF Core)
-- [ ] Create Entity Framework Core DbContext
-  - [ ] Configure all entities from data model
-  - [ ] Set up relationships and navigation properties
-  - [ ] Configure indexes for performance
-  - [ ] Add query filters for soft deletes
-- [ ] Implement Repository pattern
-  - [ ] Generic repository for common CRUD
-  - [ ] Specialized repositories per aggregate root
-  - [ ] Unit of Work pattern for transactions
-- [ ] Create EF Core migrations
-  - [ ] Initial database schema
-  - [ ] Seed data for development
-  - [ ] Migration scripts for production
-- [ ] Implement change tracking and audit
-  - [ ] CreatedAt, UpdatedAt, DeletedAt timestamps
-  - [ ] Audit log tables
-  - [ ] Change history tracking
-- [ ] Add database seeding utilities
-  - [ ] Test data generators
-  - [ ] Realistic sample data sets
-- [ ] **Milestone**: PostgreSQL persistence layer complete
+- [ ] 2.2.1 Create Entity Framework Core DbContext
+  - [ ] 2.2.1.1 Configure all entities from data model
+  - [ ] 2.2.1.2 Set up relationships and navigation properties
+  - [ ] 2.2.1.3 Configure indexes for performance
+  - [ ] 2.2.1.4 Add query filters for soft deletes
+- [ ] 2.2.2 Implement Repository pattern
+  - [ ] 2.2.2.1 Generic repository for common CRUD
+  - [ ] 2.2.2.2 Specialized repositories per aggregate root
+  - [ ] 2.2.2.3 Unit of Work pattern for transactions
+- [ ] 2.2.3 Create EF Core migrations
+  - [ ] 2.2.3.1 Initial database schema
+  - [ ] 2.2.3.2 Seed data for development
+  - [ ] 2.2.3.3 Migration scripts for production
+- [ ] 2.2.4 Implement change tracking and audit
+  - [ ] 2.2.4.1 CreatedAt, UpdatedAt, DeletedAt timestamps
+  - [ ] 2.2.4.2 Audit log tables
+  - [ ] 2.2.4.3 Change history tracking
+- [ ] 2.2.5 Add database seeding utilities
+  - [ ] 2.2.5.1 Test data generators
+  - [ ] 2.2.5.2 Realistic sample data sets
+- [ ] 2.2.6 **Milestone**: PostgreSQL persistence layer complete
 
 ### 2.3 Redis Integration
-- [ ] Implement Redis pub/sub for events
-  - [ ] Event serialization/deserialization
-  - [ ] Channel management
-  - [ ] Subscriber registration
-- [ ] Create caching abstractions
-  - [ ] Distributed cache interface
-  - [ ] Cache-aside pattern implementation
-  - [ ] Cache key strategies
-- [ ] Implement rate limiting
-  - [ ] Sliding window rate limiters
-  - [ ] Per-user and per-endpoint limits
-- [ ] Add session management
-  - [ ] Distributed session store
-  - [ ] Session timeout handling
-- [ ] **Milestone**: Redis integration complete
+- [ ] 2.3.1 Implement Redis pub/sub for events
+  - [ ] 2.3.1.1 Event serialization/deserialization
+  - [ ] 2.3.1.2 Channel management
+  - [ ] 2.3.1.3 Subscriber registration
+- [ ] 2.3.2 Create caching abstractions
+  - [ ] 2.3.2.1 Distributed cache interface
+  - [ ] 2.3.2.2 Cache-aside pattern implementation
+  - [ ] 2.3.2.3 Cache key strategies
+- [ ] 2.3.3 Implement rate limiting
+  - [ ] 2.3.3.1 Sliding window rate limiters
+  - [ ] 2.3.3.2 Per-user and per-endpoint limits
+- [ ] 2.3.4 Add session management
+  - [ ] 2.3.4.1 Distributed session store
+  - [ ] 2.3.4.2 Session timeout handling
+- [ ] 2.3.5 **Milestone**: Redis integration complete
 
 ### 2.4 Data Access Testing & Performance
-- [ ] Create integration tests for all repositories
-- [ ] Benchmark query performance
-  - [ ] Identify slow queries
-  - [ ] Add missing indexes
-  - [ ] Optimize query patterns
-- [ ] Load testing with realistic data volumes
-  - [ ] 1M+ agents
-  - [ ] 10M+ posts
-  - [ ] 100M+ relationships
-- [ ] **Milestone**: Performance validated and optimized
+- [ ] 2.4.1 Create integration tests for all repositories
+- [ ] 2.4.2 Benchmark query performance
+  - [ ] 2.4.2.1 Identify slow queries
+  - [ ] 2.4.2.2 Add missing indexes
+  - [ ] 2.4.2.3 Optimize query patterns
+- [ ] 2.4.3 Load testing with realistic data volumes
+  - [ ] 2.4.3.1 1M+ agents
+  - [ ] 2.4.3.2 10M+ posts
+  - [ ] 2.4.3.3 100M+ relationships
+- [ ] 2.4.4 **Milestone**: Performance validated and optimized
 
 **Phase 2 Output**: Fully functional data access layer with repositories, caching, and event distribution
 
@@ -179,71 +179,71 @@ This phase establishes the core data models that everything else builds upon. Ge
 **Priority**: High | **Status**: ⚪ Not Started | **Blocks**: Phase 6 (Federation)
 
 ### 3.1 AT Protocol Core Implementation
-- [ ] Implement DID resolution
-  - [ ] DID:plc resolver
-  - [ ] DID:web resolver for custom domains (theanarchox.net)
-  - [ ] DID document caching
-  - [ ] DID generation for simulation agents
-- [ ] Implement Handle resolution
-  - [ ] DNS TXT record verification (_atproto.theanarchox.net)
-  - [ ] HTTPS well-known endpoint (/.well-known/atproto-did)
-  - [ ] Handle to DID mapping
-  - [ ] Handle change handling
-  - [ ] Custom domain handle support (@username.theanarchox.net)
-- [ ] Implement Repository structure
-  - [ ] Collection management
-  - [ ] Record CRUD operations
-  - [ ] MST (Merkle Search Tree) for repositories
-- [ ] Implement CID generation
-  - [ ] Content addressing with IPLD
-  - [ ] CID verification
-  - [ ] CID to content mapping
-- [ ] **Milestone**: Core AT Protocol primitives working
+- [ ] 3.1.1 Implement DID resolution
+  - [ ] 3.1.1.1 DID:plc resolver
+  - [ ] 3.1.1.2 DID:web resolver for custom domains (theanarchox.net)
+  - [ ] 3.1.1.3 DID document caching
+  - [ ] 3.1.1.4 DID generation for simulation agents
+- [ ] 3.1.2 Implement Handle resolution
+  - [ ] 3.1.2.1 DNS TXT record verification (_atproto.theanarchox.net)
+  - [ ] 3.1.2.2 HTTPS well-known endpoint (/.well-known/atproto-did)
+  - [ ] 3.1.2.3 Handle to DID mapping
+  - [ ] 3.1.2.4 Handle change handling
+  - [ ] 3.1.2.5 Custom domain handle support (@username.theanarchox.net)
+- [ ] 3.1.3 Implement Repository structure
+  - [ ] 3.1.3.1 Collection management
+  - [ ] 3.1.3.2 Record CRUD operations
+  - [ ] 3.1.3.3 MST (Merkle Search Tree) for repositories
+- [ ] 3.1.4 Implement CID generation
+  - [ ] 3.1.4.1 Content addressing with IPLD
+  - [ ] 3.1.4.2 CID verification
+  - [ ] 3.1.4.3 CID to content mapping
+- [ ] 3.1.5 **Milestone**: Core AT Protocol primitives working
 
 ### 3.2 Personal Data Server (PDS)
-- [ ] Implement PDS endpoints
-  - [ ] com.atproto.server.* endpoints
-  - [ ] com.atproto.repo.* endpoints
-  - [ ] Authentication and authorization
-  - [ ] Custom domain handle registration
-- [ ] Implement blob storage
-  - [ ] Image upload and storage
-  - [ ] Video processing
-  - [ ] Blob verification
-- [ ] Implement sync protocol
-  - [ ] Event log (commit log)
-  - [ ] Sync subscribers
-  - [ ] Catch-up sync
-- [ ] Configure custom domain integration
-  - [ ] Serve .well-known/atproto-did endpoint
-  - [ ] Handle DNS verification
-  - [ ] Multi-domain support for different agent types
-- [ ] **Milestone**: Basic PDS operational with custom domain support
+- [ ] 3.2.1 Implement PDS endpoints
+  - [ ] 3.2.1.1 com.atproto.server.* endpoints
+  - [ ] 3.2.1.2 com.atproto.repo.* endpoints
+  - [ ] 3.2.1.3 Authentication and authorization
+  - [ ] 3.2.1.4 Custom domain handle registration
+- [ ] 3.2.2 Implement blob storage
+  - [ ] 3.2.2.1 Image upload and storage
+  - [ ] 3.2.2.2 Video processing
+  - [ ] 3.2.2.3 Blob verification
+- [ ] 3.2.3 Implement sync protocol
+  - [ ] 3.2.3.1 Event log (commit log)
+  - [ ] 3.2.3.2 Sync subscribers
+  - [ ] 3.2.3.3 Catch-up sync
+- [ ] 3.2.4 Configure custom domain integration
+  - [ ] 3.2.4.1 Serve .well-known/atproto-did endpoint
+  - [ ] 3.2.4.2 Handle DNS verification
+  - [ ] 3.2.4.3 Multi-domain support for different agent types
+- [ ] 3.2.5 **Milestone**: Basic PDS operational with custom domain support
 
 ### 3.3 AppView (Aggregation Layer)
-- [ ] Implement AppView indexing
-  - [ ] Subscribe to PDS event logs
-  - [ ] Index posts, profiles, relationships
-  - [ ] Build aggregated views
-- [ ] Implement feed generation
-  - [ ] Reverse chronological timeline
-  - [ ] Algorithmic feed with engagement signals
-  - [ ] Custom feed generators
-- [ ] Implement search
-  - [ ] Full-text search for posts
-  - [ ] User search
-  - [ ] Hashtag/topic search
-- [ ] **Milestone**: AppView providing feeds and search
+- [ ] 3.3.1 Implement AppView indexing
+  - [ ] 3.3.1.1 Subscribe to PDS event logs
+  - [ ] 3.3.1.2 Index posts, profiles, relationships
+  - [ ] 3.3.1.3 Build aggregated views
+- [ ] 3.3.2 Implement feed generation
+  - [ ] 3.3.2.1 Reverse chronological timeline
+  - [ ] 3.3.2.2 Algorithmic feed with engagement signals
+  - [ ] 3.3.2.3 Custom feed generators
+- [ ] 3.3.3 Implement search
+  - [ ] 3.3.3.1 Full-text search for posts
+  - [ ] 3.3.3.2 User search
+  - [ ] 3.3.3.3 Hashtag/topic search
+- [ ] 3.3.4 **Milestone**: AppView providing feeds and search
 
 ### 3.4 Lexicons & Custom Records
-- [ ] Define custom lexicon schemas
-  - [ ] Simulation-specific record types
-  - [ ] Extended metadata for agents
-  - [ ] Campaign/scenario records
-- [ ] Implement lexicon validation
-  - [ ] Schema validation on write
-  - [ ] Version compatibility checking
-- [ ] **Milestone**: Custom lexicons in use
+- [ ] 3.4.1 Define custom lexicon schemas
+  - [ ] 3.4.1.1 Simulation-specific record types
+  - [ ] 3.4.1.2 Extended metadata for agents
+  - [ ] 3.4.1.3 Campaign/scenario records
+- [ ] 3.4.2 Implement lexicon validation
+  - [ ] 3.4.2.1 Schema validation on write
+  - [ ] 3.4.2.2 Version compatibility checking
+- [ ] 3.4.3 **Milestone**: Custom lexicons in use
 
 **Phase 3 Output**: Working AT Protocol implementation with PDS and AppView
 
@@ -253,98 +253,98 @@ This phase establishes the core data models that everything else builds upon. Ge
 **Priority**: High | **Status**: ⚪ Not Started | **Blocks**: Phase 5 (Visualization)
 
 ### 4.1 Simulation Architecture
-- [ ] Design simulation loop architecture
-  - [ ] Time-stepped vs continuous simulation
-  - [ ] Event scheduling system
-  - [ ] Parallel processing strategy
-- [ ] Implement simulation orchestrator
-  - [ ] Simulation lifecycle (start, pause, resume, stop)
-  - [ ] Time management (speed controls, time warping)
-  - [ ] State checkpointing and recovery
-- [ ] Design agent lifecycle
-  - [ ] Agent creation and initialization
-  - [ ] Agent activation/deactivation
-  - [ ] Agent removal and cleanup
-- [ ] **Milestone**: Simulation framework operational
+- [ ] 4.1.1 Design simulation loop architecture
+  - [ ] 4.1.1.1 Time-stepped vs continuous simulation
+  - [ ] 4.1.1.2 Event scheduling system
+  - [ ] 4.1.1.3 Parallel processing strategy
+- [ ] 4.1.2 Implement simulation orchestrator
+  - [ ] 4.1.2.1 Simulation lifecycle (start, pause, resume, stop)
+  - [ ] 4.1.2.2 Time management (speed controls, time warping)
+  - [ ] 4.1.2.3 State checkpointing and recovery
+- [ ] 4.1.3 Design agent lifecycle
+  - [ ] 4.1.3.1 Agent creation and initialization
+  - [ ] 4.1.3.2 Agent activation/deactivation
+  - [ ] 4.1.3.3 Agent removal and cleanup
+- [ ] 4.1.4 **Milestone**: Simulation framework operational
 
 ### 4.2 Agent Behavior System
-- [ ] Implement behavior models
-  - [ ] Posting behavior (frequency, content generation)
-  - [ ] Engagement behavior (like, comment, share probabilities)
-  - [ ] Following behavior (discovery, follow-back patterns)
-  - [ ] Content consumption (reading, scrolling, dwell time)
-- [ ] Implement personality traits
-  - [ ] Trait-based behavior modifiers
-  - [ ] Personality evolution over time
-  - [ ] Trait influence on content preferences
-- [ ] Implement decision-making systems
-  - [ ] Utility-based AI for agent decisions
-  - [ ] Probabilistic action selection
-  - [ ] Learning from past interactions
-- [ ] **Milestone**: Agents exhibiting realistic behaviors
+- [ ] 4.2.1 Implement behavior models
+  - [ ] 4.2.1.1 Posting behavior (frequency, content generation)
+  - [ ] 4.2.1.2 Engagement behavior (like, comment, share probabilities)
+  - [ ] 4.2.1.3 Following behavior (discovery, follow-back patterns)
+  - [ ] 4.2.1.4 Content consumption (reading, scrolling, dwell time)
+- [ ] 4.2.2 Implement personality traits
+  - [ ] 4.2.2.1 Trait-based behavior modifiers
+  - [ ] 4.2.2.2 Personality evolution over time
+  - [ ] 4.2.2.3 Trait influence on content preferences
+- [ ] 4.2.3 Implement decision-making systems
+  - [ ] 4.2.3.1 Utility-based AI for agent decisions
+  - [ ] 4.2.3.2 Probabilistic action selection
+  - [ ] 4.2.3.3 Learning from past interactions
+- [ ] 4.2.4 **Milestone**: Agents exhibiting realistic behaviors
 
 ### 4.3 Content Generation
-- [ ] Implement content generators
-  - [ ] Template-based post generation
-  - [ ] Topic modeling for content
-  - [ ] Sentiment variation
-  - [ ] Media attachment simulation
-- [ ] Implement response generation
-  - [ ] Reply generation based on context
-  - [ ] Quote tweet generation
-  - [ ] Reaction selection logic
-- [ ] Implement trending mechanisms
-  - [ ] Hashtag trending algorithm
-  - [ ] Viral content detection
-  - [ ] Meme propagation
-- [ ] **Milestone**: Dynamic content generation working
+- [ ] 4.3.1 Implement content generators
+  - [ ] 4.3.1.1 Template-based post generation
+  - [ ] 4.3.1.2 Topic modeling for content
+  - [ ] 4.3.1.3 Sentiment variation
+  - [ ] 4.3.1.4 Media attachment simulation
+- [ ] 4.3.2 Implement response generation
+  - [ ] 4.3.2.1 Reply generation based on context
+  - [ ] 4.3.2.2 Quote tweet generation
+  - [ ] 4.3.2.3 Reaction selection logic
+- [ ] 4.3.3 Implement trending mechanisms
+  - [ ] 4.3.3.1 Hashtag trending algorithm
+  - [ ] 4.3.3.2 Viral content detection
+  - [ ] 4.3.3.3 Meme propagation
+- [ ] 4.3.4 **Milestone**: Dynamic content generation working
 
 ### 4.4 Network Dynamics
-- [ ] Implement network growth models
-  - [ ] Preferential attachment (rich get richer)
-  - [ ] Homophily (similar agents connect)
-  - [ ] Triadic closure (friend-of-friend connections)
-- [ ] Implement influence propagation
-  - [ ] Opinion dynamics models
-  - [ ] Information cascade simulation
-  - [ ] Influencer effect modeling
-- [ ] Implement community formation
-  - [ ] Cluster detection algorithms
-  - [ ] Echo chamber emergence
-  - [ ] Bridge agents between communities
-- [ ] **Milestone**: Network exhibits realistic dynamics
+- [ ] 4.4.1 Implement network growth models
+  - [ ] 4.4.1.1 Preferential attachment (rich get richer)
+  - [ ] 4.4.1.2 Homophily (similar agents connect)
+  - [ ] 4.4.1.3 Triadic closure (friend-of-friend connections)
+- [ ] 4.4.2 Implement influence propagation
+  - [ ] 4.4.2.1 Opinion dynamics models
+  - [ ] 4.4.2.2 Information cascade simulation
+  - [ ] 4.4.2.3 Influencer effect modeling
+- [ ] 4.4.3 Implement community formation
+  - [ ] 4.4.3.1 Cluster detection algorithms
+  - [ ] 4.4.3.2 Echo chamber emergence
+  - [ ] 4.4.3.3 Bridge agents between communities
+- [ ] 4.4.4 **Milestone**: Network exhibits realistic dynamics
 
 ### 4.5 Scenarios & Campaigns
-- [ ] Implement scenario system
-  - [ ] Scenario configuration DSL
-  - [ ] Scenario execution engine
-  - [ ] Scenario analytics and reporting
-- [ ] Create pre-built scenarios
-  - [ ] Viral event simulation
-  - [ ] Product launch campaign
-  - [ ] Misinformation spread
-  - [ ] Crisis management
-  - [ ] Organic growth
-- [ ] Implement campaign system
-  - [ ] Sponsored content injection
-  - [ ] Influencer activation
-  - [ ] A/B testing framework
-- [ ] **Milestone**: Multiple scenarios runnable
+- [ ] 4.5.1 Implement scenario system
+  - [ ] 4.5.1.1 Scenario configuration DSL
+  - [ ] 4.5.1.2 Scenario execution engine
+  - [ ] 4.5.1.3 Scenario analytics and reporting
+- [ ] 4.5.2 Create pre-built scenarios
+  - [ ] 4.5.2.1 Viral event simulation
+  - [ ] 4.5.2.2 Product launch campaign
+  - [ ] 4.5.2.3 Misinformation spread
+  - [ ] 4.5.2.4 Crisis management
+  - [ ] 4.5.2.5 Organic growth
+- [ ] 4.5.3 Implement campaign system
+  - [ ] 4.5.3.1 Sponsored content injection
+  - [ ] 4.5.3.2 Influencer activation
+  - [ ] 4.5.3.3 A/B testing framework
+- [ ] 4.5.4 **Milestone**: Multiple scenarios runnable
 
 ### 4.6 Simulation Observability
-- [ ] Implement real-time metrics
-  - [ ] Agent activity metrics
-  - [ ] Content performance metrics
-  - [ ] Network health metrics
-- [ ] Implement event logging
-  - [ ] Structured event logs
-  - [ ] Event replay capability
-  - [ ] Event analytics
-- [ ] Implement alerts and notifications
-  - [ ] Anomaly detection
-  - [ ] Threshold-based alerts
-  - [ ] Alert channels (webhook, email, SignalR)
-- [ ] **Milestone**: Full simulation observability
+- [ ] 4.6.1 Implement real-time metrics
+  - [ ] 4.6.1.1 Agent activity metrics
+  - [ ] 4.6.1.2 Content performance metrics
+  - [ ] 4.6.1.3 Network health metrics
+- [ ] 4.6.2 Implement event logging
+  - [ ] 4.6.2.1 Structured event logs
+  - [ ] 4.6.2.2 Event replay capability
+  - [ ] 4.6.2.3 Event analytics
+- [ ] 4.6.3 Implement alerts and notifications
+  - [ ] 4.6.3.1 Anomaly detection
+  - [ ] 4.6.3.2 Threshold-based alerts
+  - [ ] 4.6.3.3 Alert channels (webhook, email, SignalR)
+- [ ] 4.6.4 **Milestone**: Full simulation observability
 
 **Phase 4 Output**: Fully functional simulation engine with realistic agent behaviors
 
@@ -354,89 +354,89 @@ This phase establishes the core data models that everything else builds upon. Ge
 **Priority**: Medium | **Status**: ⚪ Not Started | **Blocks**: None
 
 ### 5.1 Real-Time Dashboard
-- [ ] Design dashboard UI/UX
-  - [ ] Wireframes and mockups
-  - [ ] User flow diagrams
-  - [ ] Responsive design
-- [ ] Implement frontend application
-  - [ ] Choose framework (React/Vue/Blazor)
-  - [ ] Set up build pipeline
-  - [ ] Component library
-- [ ] Create dashboard widgets
-  - [ ] Simulation status widget
-  - [ ] Active agents widget
-  - [ ] Post rate graph
-  - [ ] Engagement metrics
-  - [ ] Top trending content
-- [ ] Implement SignalR client
-  - [ ] Real-time event subscription
-  - [ ] Auto-reconnection
-  - [ ] Event buffering
-- [ ] **Milestone**: Real-time dashboard operational
+- [ ] 5.1.1 Design dashboard UI/UX
+  - [ ] 5.1.1.1 Wireframes and mockups
+  - [ ] 5.1.1.2 User flow diagrams
+  - [ ] 5.1.1.3 Responsive design
+- [ ] 5.1.2 Implement frontend application
+  - [ ] 5.1.2.1 Choose framework (React/Vue/Blazor)
+  - [ ] 5.1.2.2 Set up build pipeline
+  - [ ] 5.1.2.3 Component library
+- [ ] 5.1.3 Create dashboard widgets
+  - [ ] 5.1.3.1 Simulation status widget
+  - [ ] 5.1.3.2 Active agents widget
+  - [ ] 5.1.3.3 Post rate graph
+  - [ ] 5.1.3.4 Engagement metrics
+  - [ ] 5.1.3.5 Top trending content
+- [ ] 5.1.4 Implement SignalR client
+  - [ ] 5.1.4.1 Real-time event subscription
+  - [ ] 5.1.4.2 Auto-reconnection
+  - [ ] 5.1.4.3 Event buffering
+- [ ] 5.1.5 **Milestone**: Real-time dashboard operational
 
 ### 5.2 Network Visualization
-- [ ] Implement graph visualization
-  - [ ] Choose visualization library (D3.js, Cytoscape, Vis.js)
-  - [ ] Force-directed layout
-  - [ ] Interactive zoom and pan
-  - [ ] Node and edge styling
-- [ ] Create visualization modes
-  - [ ] Full network view
-  - [ ] Ego network (focused on one agent)
-  - [ ] Community cluster view
-  - [ ] Influence heatmap
-- [ ] Add filtering and search
-  - [ ] Filter by agent type, activity, influence
-  - [ ] Search and highlight agents
-  - [ ] Time-based filtering
-- [ ] Implement graph analytics overlays
-  - [ ] Centrality visualization
-  - [ ] Community detection visualization
-  - [ ] Shortest path highlighting
-- [ ] **Milestone**: Interactive network visualization
+- [ ] 5.2.1 Implement graph visualization
+  - [ ] 5.2.1.1 Choose visualization library (D3.js, Cytoscape, Vis.js)
+  - [ ] 5.2.1.2 Force-directed layout
+  - [ ] 5.2.1.3 Interactive zoom and pan
+  - [ ] 5.2.1.4 Node and edge styling
+- [ ] 5.2.2 Create visualization modes
+  - [ ] 5.2.2.1 Full network view
+  - [ ] 5.2.2.2 Ego network (focused on one agent)
+  - [ ] 5.2.2.3 Community cluster view
+  - [ ] 5.2.2.4 Influence heatmap
+- [ ] 5.2.3 Add filtering and search
+  - [ ] 5.2.3.1 Filter by agent type, activity, influence
+  - [ ] 5.2.3.2 Search and highlight agents
+  - [ ] 5.2.3.3 Time-based filtering
+- [ ] 5.2.4 Implement graph analytics overlays
+  - [ ] 5.2.4.1 Centrality visualization
+  - [ ] 5.2.4.2 Community detection visualization
+  - [ ] 5.2.4.3 Shortest path highlighting
+- [ ] 5.2.5 **Milestone**: Interactive network visualization
 
 ### 5.3 Activity Timeline & Analytics
-- [ ] Create agent activity timeline
-  - [ ] Individual agent activity view
-  - [ ] Post history
-  - [ ] Engagement history
-  - [ ] Relationship changes
-- [ ] Create content analytics
-  - [ ] Post performance metrics
-  - [ ] Engagement breakdown
-  - [ ] Viral path tracking
-- [ ] Create network analytics views
-  - [ ] Topology metrics over time
-  - [ ] Community evolution
-  - [ ] Influence rankings
-- [ ] **Milestone**: Comprehensive analytics views
+- [ ] 5.3.1 Create agent activity timeline
+  - [ ] 5.3.1.1 Individual agent activity view
+  - [ ] 5.3.1.2 Post history
+  - [ ] 5.3.1.3 Engagement history
+  - [ ] 5.3.1.4 Relationship changes
+- [ ] 5.3.2 Create content analytics
+  - [ ] 5.3.2.1 Post performance metrics
+  - [ ] 5.3.2.2 Engagement breakdown
+  - [ ] 5.3.2.3 Viral path tracking
+- [ ] 5.3.3 Create network analytics
+  - [ ] 5.3.3.1 Topology metrics over time
+  - [ ] 5.3.3.2 Community evolution
+  - [ ] 5.3.3.3 Influence rankings
+- [ ] 5.3.4 **Milestone**: Comprehensive analytics views
 
 ### 5.4 Simulation Control Interface
-- [ ] Implement simulation controls
-  - [ ] Start/Stop/Pause/Resume
-  - [ ] Speed control (slow-mo, real-time, fast-forward)
-  - [ ] Time jump (skip to specific time)
-- [ ] Implement scenario selector
-  - [ ] List available scenarios
-  - [ ] Scenario configuration UI
-  - [ ] Scenario execution controls
-- [ ] Implement agent management UI
-  - [ ] Create/delete agents
-  - [ ] Edit agent properties
-  - [ ] Agent behavior tuning
-- [ ] **Milestone**: Full simulation control from UI
+- [ ] 5.4.1 Implement simulation controls
+  - [ ] 5.4.1.1 Start/Stop/Pause/Resume
+  - [ ] 5.4.1.2 Speed control (slow-mo, real-time, fast-forward)
+  - [ ] 5.4.1.3 Time jump (skip to specific time)
+- [ ] 5.4.2 Implement scenario selector
+  - [ ] 5.4.2.1 List available scenarios
+  - [ ] 5.4.2.2 Scenario configuration UI
+  - [ ] 5.4.2.3 Scenario execution controls
+- [ ] 5.4.3 Implement agent management UI
+  - [ ] 5.4.3.1 Create/delete agents
+  - [ ] 5.4.3.2 Edit agent properties
+  - [ ] 5.4.3.3 Agent behavior tuning
+- [ ] 5.4.4 **Milestone**: Full simulation control from UI
 
 ### 5.5 Reporting & Export
-- [ ] Implement report generation
-  - [ ] Simulation summary reports
-  - [ ] Network analysis reports
-  - [ ] Campaign performance reports
-- [ ] Implement data export
-  - [ ] CSV export for metrics
-  - [ ] JSON export for data
-  - [ ] GraphML export for network
-  - [ ] Image export for visualizations
-- [ ] **Milestone**: Reporting and export complete
+- [ ] 5.5.1 Implement report generation
+  - [ ] 5.5.1.1 Simulation summary reports
+  - [ ] 5.5.1.2 Network analysis reports
+  - [ ] 5.5.1.3 Campaign performance reports
+- [ ] 5.5.2 Implement data export
+  - [ ] 5.5.2.1 CSV export for metrics
+  - [ ] 5.5.2.2 JSON export for data
+  - [ ] 5.5.2.3 GraphML export for network
+  - [ ] 5.5.2.4 Image export for visualizations
+- [ ] 5.5.3 **Milestone**: Reporting and export complete
 
 **Phase 5 Output**: Comprehensive visualization and monitoring tools
 
@@ -446,78 +446,78 @@ This phase establishes the core data models that everything else builds upon. Ge
 **Priority**: Medium | **Status**: ⚪ Not Started | **Blocks**: None
 
 ### 6.1 Advanced Graph Algorithms
-- [ ] Implement centrality measures
-  - [ ] PageRank
-  - [ ] Betweenness centrality
-  - [ ] Closeness centrality
-  - [ ] Eigenvector centrality
-- [ ] Implement community detection
-  - [ ] Louvain algorithm
-  - [ ] Label propagation
-  - [ ] Modularity optimization
-- [ ] Implement path analysis
-  - [ ] Shortest path algorithms
-  - [ ] All paths enumeration
-  - [ ] Influence path tracking
-- [ ] Implement network flow
-  - [ ] Information diffusion modeling
-  - [ ] Influence flow calculation
-- [ ] **Milestone**: Advanced graph analytics available
+- [ ] 6.1.1 Implement centrality measures
+  - [ ] 6.1.1.1 PageRank
+  - [ ] 6.1.1.2 Betweenness centrality
+  - [ ] 6.1.1.3 Closeness centrality
+  - [ ] 6.1.1.4 Eigenvector centrality
+- [ ] 6.1.2 Implement community detection
+  - [ ] 6.1.2.1 Louvain algorithm
+  - [ ] 6.1.2.2 Label propagation
+  - [ ] 6.1.2.3 Modularity optimization
+- [ ] 6.1.3 Implement path analysis
+  - [ ] 6.1.3.1 Shortest path algorithms
+  - [ ] 6.1.3.2 All paths enumeration
+  - [ ] 6.1.3.3 Influence path tracking
+- [ ] 6.1.4 Implement network flow
+  - [ ] 6.1.4.1 Information diffusion modeling
+  - [ ] 6.1.4.2 Influence flow calculation
+- [ ] 6.1.5 **Milestone**: Advanced graph analytics available
 
 ### 6.2 Bot Detection & Analysis
-- [ ] Implement bot detection algorithms
-  - [ ] Activity pattern analysis
-  - [ ] Content similarity detection
-  - [ ] Network structure analysis
-  - [ ] Timing analysis
-- [ ] Implement coordinated behavior detection
-  - [ ] Synchronized posting detection
-  - [ ] Coordinated engagement detection
-  - [ ] Network subgraph analysis
-- [ ] Create bot classification system
-  - [ ] Bot probability scoring
-  - [ ] Bot type classification
-- [ ] **Milestone**: Bot detection operational
+- [ ] 6.2.1 Implement bot detection algorithms
+  - [ ] 6.2.1.1 Activity pattern analysis
+  - [ ] 6.2.1.2 Content similarity detection
+  - [ ] 6.2.1.3 Network structure analysis
+  - [ ] 6.2.1.4 Timing analysis
+- [ ] 6.2.2 Implement coordinated behavior detection
+  - [ ] 6.2.2.1 Synchronized posting detection
+  - [ ] 6.2.2.2 Coordinated engagement detection
+  - [ ] 6.2.2.3 Network subgraph analysis
+- [ ] 6.2.3 Create bot classification system
+  - [ ] 6.2.3.1 Bot probability scoring
+  - [ ] 6.2.3.2 Bot type classification
+- [ ] 6.2.4 **Milestone**: Bot detection operational
 
 ### 6.3 Echo Chamber & Filter Bubble Detection
-- [ ] Implement polarization metrics
-  - [ ] Opinion clustering
-  - [ ] Cross-cluster interaction rates
-  - [ ] Polarization indices
-- [ ] Implement echo chamber detection
-  - [ ] Closed community identification
-  - [ ] Content diversity scoring
-  - [ ] Bridge detection
-- [ ] Create filter bubble analysis
-  - [ ] Content exposure analysis
-  - [ ] Recommendation bias detection
-- [ ] **Milestone**: Echo chamber detection working
+- [ ] 6.3.1 Implement polarization metrics
+  - [ ] 6.3.1.1 Opinion clustering
+  - [ ] 6.3.1.2 Cross-cluster interaction rates
+  - [ ] 6.3.1.3 Polarization indices
+- [ ] 6.3.2 Implement echo chamber detection
+  - [ ] 6.3.2.1 Closed community identification
+  - [ ] 6.3.2.2 Content diversity scoring
+  - [ ] 6.3.2.3 Bridge detection
+- [ ] 6.3.3 Create filter bubble analysis
+  - [ ] 6.3.3.1 Content exposure analysis
+  - [ ] 6.3.3.2 Recommendation bias detection
+- [ ] 6.3.4 **Milestone**: Echo chamber detection working
 
 ### 6.4 Information Cascade Tracking
-- [ ] Implement cascade detection
-  - [ ] Cascade initiation identification
-  - [ ] Propagation path tracking
-  - [ ] Cascade size and speed metrics
-- [ ] Implement cascade analytics
-  - [ ] Virality prediction
-  - [ ] Cascade comparison
-  - [ ] Intervention impact analysis
-- [ ] **Milestone**: Cascade tracking operational
+- [ ] 6.4.1 Implement cascade detection
+  - [ ] 6.4.1.1 Cascade initiation identification
+  - [ ] 6.4.1.2 Propagation path tracking
+  - [ ] 6.4.1.3 Cascade size and speed metrics
+- [ ] 6.4.2 Implement cascade analytics
+  - [ ] 6.4.2.1 Virality prediction
+  - [ ] 6.4.2.2 Cascade comparison
+  - [ ] 6.4.2.3 Intervention impact analysis
+- [ ] 6.4.3 **Milestone**: Cascade tracking operational
 
 ### 6.5 Federation (Multi-Instance)
-- [ ] Implement federation protocol
-  - [ ] Cross-instance authentication
-  - [ ] Content federation
-  - [ ] User discovery across instances
-- [ ] Implement instance management
-  - [ ] Instance registration
-  - [ ] Instance health monitoring
-  - [ ] Instance blocking/allowlisting
-- [ ] Test federated scenarios
-  - [ ] Cross-instance follows
-  - [ ] Federated content propagation
-  - [ ] Federated search
-- [ ] **Milestone**: Federation working
+- [ ] 6.5.1 Implement federation protocol
+  - [ ] 6.5.1.1 Cross-instance authentication
+  - [ ] 6.5.1.2 Content federation
+  - [ ] 6.5.1.3 User discovery across instances
+- [ ] 6.5.2 Implement instance management
+  - [ ] 6.5.2.1 Instance registration
+  - [ ] 6.5.2.2 Instance health monitoring
+  - [ ] 6.5.2.3 Instance blocking/allowlisting
+- [ ] 6.5.3 Test federated scenarios
+  - [ ] 6.5.3.1 Cross-instance follows
+  - [ ] 6.5.3.2 Federated content propagation
+  - [ ] 6.5.3.3 Federated search
+- [ ] 6.5.4 **Milestone**: Federation working
 
 **Phase 6 Output**: Advanced analytical capabilities and federation support
 
@@ -527,73 +527,73 @@ This phase establishes the core data models that everything else builds upon. Ge
 **Priority**: Low | **Status**: ⚪ Not Started | **Blocks**: None
 
 ### 7.1 Performance Optimization
-- [ ] Profile and optimize hot paths
-  - [ ] Database query optimization
-  - [ ] Graph traversal optimization
-  - [ ] Cache hit rate optimization
-- [ ] Implement horizontal scaling
-  - [ ] Stateless API design
-  - [ ] Worker pool for simulation
-  - [ ] Database read replicas
-- [ ] Optimize memory usage
-  - [ ] Object pooling
-  - [ ] Streaming large datasets
-  - [ ] Pagination for queries
-- [ ] **Milestone**: System handles 10M+ agents
+- [ ] 7.1.1 Profile and optimize hot paths
+  - [ ] 7.1.1.1 Database query optimization
+  - [ ] 7.1.1.2 Graph traversal optimization
+  - [ ] 7.1.1.3 Cache hit rate optimization
+- [ ] 7.1.2 Implement horizontal scaling
+  - [ ] 7.1.2.1 Stateless API design
+  - [ ] 7.1.2.2 Worker pool for simulation
+  - [ ] 7.1.2.3 Database read replicas
+- [ ] 7.1.3 Optimize memory usage
+  - [ ] 7.1.3.1 Object pooling
+  - [ ] 7.1.3.2 Streaming large datasets
+  - [ ] 7.1.3.3 Pagination for queries
+- [ ] 7.1.4 **Milestone**: System handles 10M+ agents
 
 ### 7.2 Kubernetes Deployment
-- [ ] Create Kubernetes manifests
-  - [ ] Deployments for services
-  - [ ] StatefulSets for databases
-  - [ ] Services and ingress
-- [ ] Implement Helm charts
-  - [ ] Parameterized deployments
-  - [ ] Environment-specific values
-- [ ] Set up CI/CD pipelines
-  - [ ] Automated testing
-  - [ ] Container builds
-  - [ ] Automated deployments
-- [ ] **Milestone**: K8s deployment ready
+- [ ] 7.2.1 Create Kubernetes manifests
+  - [ ] 7.2.1.1 Deployments for services
+  - [ ] 7.2.1.2 StatefulSets for databases
+  - [ ] 7.2.1.3 Services and ingress
+- [ ] 7.2.2 Implement Helm charts
+  - [ ] 7.2.2.1 Parameterized deployments
+  - [ ] 7.2.2.2 Environment-specific values
+- [ ] 7.2.3 Set up CI/CD pipelines
+  - [ ] 7.2.3.1 Automated testing
+  - [ ] 7.2.3.2 Container builds
+  - [ ] 7.2.3.3 Automated deployments
+- [ ] 7.2.4 **Milestone**: K8s deployment ready
 
 ### 7.3 Monitoring & Alerting
-- [ ] Implement comprehensive monitoring
-  - [ ] Application metrics (Prometheus)
-  - [ ] Distributed tracing (Jaeger/Zipkin)
-  - [ ] Log aggregation (ELK stack)
-- [ ] Set up alerting
-  - [ ] Alert rules configuration
-  - [ ] Alert routing
-  - [ ] On-call schedules
-- [ ] Create operational dashboards
-  - [ ] System health dashboard
-  - [ ] Performance dashboard
-  - [ ] Business metrics dashboard
-- [ ] **Milestone**: Production monitoring in place
+- [ ] 7.3.1 Implement comprehensive monitoring
+  - [ ] 7.3.1.1 Application metrics (Prometheus)
+  - [ ] 7.3.1.2 Distributed tracing (Jaeger/Zipkin)
+  - [ ] 7.3.1.3 Log aggregation (ELK stack)
+- [ ] 7.3.2 Set up alerting
+  - [ ] 7.3.2.1 Alert rules configuration
+  - [ ] 7.3.2.2 Alert routing
+  - [ ] 7.3.2.3 On-call schedules
+- [ ] 7.3.3 Create operational dashboards
+  - [ ] 7.3.3.1 System health dashboard
+  - [ ] 7.3.3.2 Performance dashboard
+  - [ ] 7.3.3.3 Business metrics dashboard
+- [ ] 7.3.4 **Milestone**: Production monitoring in place
 
 ### 7.4 Security Hardening
-- [ ] Implement security best practices
-  - [ ] Input validation
-  - [ ] SQL injection prevention
-  - [ ] XSS prevention
-  - [ ] CSRF protection
-- [ ] Implement rate limiting and DDoS protection
-- [ ] Set up security scanning
-  - [ ] Dependency vulnerability scanning
-  - [ ] Container image scanning
-  - [ ] SAST/DAST scanning
-- [ ] **Milestone**: Security hardened
+- [ ] 7.4.1 Implement security best practices
+  - [ ] 7.4.1.1 Input validation
+  - [ ] 7.4.1.2 SQL injection prevention
+  - [ ] 7.4.1.3 XSS prevention
+  - [ ] 7.4.1.4 CSRF protection
+- [ ] 7.4.2 Implement rate limiting and DDoS protection
+- [ ] 7.4.3 Set up security scanning
+  - [ ] 7.4.3.1 Dependency vulnerability scanning
+  - [ ] 7.4.3.2 Container image scanning
+  - [ ] 7.4.3.3 SAST/DAST scanning
+- [ ] 7.4.4 **Milestone**: Security hardened
 
 ### 7.5 Documentation & Training
-- [ ] Create comprehensive documentation
-  - [ ] Architecture documentation
-  - [ ] API documentation
-  - [ ] Deployment guides
-  - [ ] User guides
-- [ ] Create video tutorials
-  - [ ] Getting started tutorial
-  - [ ] Advanced features tutorial
-  - [ ] Scenario creation tutorial
-- [ ] **Milestone**: Documentation complete
+- [ ] 7.5.1 Create comprehensive documentation
+  - [ ] 7.5.1.1 Architecture documentation
+  - [ ] 7.5.1.2 API documentation
+  - [ ] 7.5.1.3 Deployment guides
+  - [ ] 7.5.1.4 User guides
+- [ ] 7.5.2 Create video tutorials
+  - [ ] 7.5.2.1 Getting started tutorial
+  - [ ] 7.5.2.2 Advanced features tutorial
+  - [ ] 7.5.2.3 Scenario creation tutorial
+- [ ] 7.5.3 **Milestone**: Documentation complete
 
 **Phase 7 Output**: Production-ready, scalable, secure system
 

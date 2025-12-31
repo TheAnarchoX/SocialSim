@@ -12,9 +12,21 @@ This directory contains the comprehensive data model design for SocialSim's soci
 - [Content Hierarchies](./content-hierarchies.md) - Threads, Conversations, Quote chains
 - [Privacy & Visibility](./privacy-visibility.md) - Access control and visibility rules
 
+### Simulation (Phase 1.2)
+- [Agent Behavior Model](./agent-behavior-model.md) - Personality, activity patterns, content preferences, influence susceptibility
+- [Simulation State Model](./simulation-state-model.md) - Configuration, run state, metrics, checkpoints
+- [Simulation Events Model](./simulation-events-model.md) - Event taxonomy, metadata, and aggregation patterns
+- [Scenarios & Campaigns Model](./scenarios-campaigns-model.md) - Viral events, marketing campaigns, crisis simulations, optional DSL
+
+### AT Protocol (Phase 1.3)
+- [AT Protocol Primitives](./at-protocol-primitives.md) - DID/handle/repo/record/rkey/CID mapping and schema evolution strategy
+- [Handle Resolution & Verification](./at-protocol-handle-resolution.md) - DNS/HTTPS sources, verification state machine, caching fields
+- [Federation & Sync State](./at-protocol-federation-model.md) - federation sources, cursors/checkpoints, commit log (data-only)
+
 ### Database Schemas
 - [PostgreSQL Schema](./postgresql-schema.sql) - Complete SQL DDL for relational database
 - [Neo4j Model](./neo4j-model.md) - Graph database model with Cypher examples and temporal data strategy
+- [Neo4j Cypher Query Builder](./neo4j-cypher-query-builder.md) - Fluent API for constructing Cypher queries + parameters
 
 ### Performance & Validation
 - [Neo4j Performance Validation](./neo4j-performance-validation.md) - Query validation, graph algorithms, benchmarking
