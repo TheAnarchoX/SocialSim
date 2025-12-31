@@ -422,6 +422,9 @@ CREATE TABLE user_metrics_snapshots (
     CONSTRAINT uq_user_snapshot UNIQUE (user_id, snapshot_date)
 );
 
+CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
+CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
+
 -- =====================================================
 -- COMPLIANCE & CONSENT (GDPR/CCPA)
 -- =====================================================
@@ -457,6 +460,9 @@ CREATE TABLE consent_records (
     granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
     withdrawn_at TIMESTAMP, -- When consent was withdrawn
     
+    -- Note: PostgreSQL's UNIQUE constraint treats NULL values as distinct, 
+    -- allowing multiple NULL user_id records for the same purpose/version.
+    -- This is intentional to maintain consent history for deleted users.
     CONSTRAINT uq_user_consent_purpose_version UNIQUE (user_id, purpose, consent_version)
 );
 
@@ -524,9 +530,6 @@ CREATE TABLE data_processing_log (
 CREATE INDEX idx_processing_log_user ON data_processing_log(user_id, occurred_at DESC);
 CREATE INDEX idx_processing_log_activity ON data_processing_log(activity_type, occurred_at DESC);
 
-CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
-CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
-
 -- =====================================================
 -- INDEXES
 -- =====================================================
@@ -572,10 +575,8 @@ CREATE INDEX idx_follows_following ON follows(following_id, created_at DESC);
 CREATE INDEX idx_follows_status ON follows(status);
 CREATE INDEX idx_follows_active ON follows(follower_id, following_id) WHERE status = 'Active';
 
--- Additional follow indexes for relationship queries
-CREATE INDEX idx_follows_active_follower ON follows(follower_id, following_id, created_at DESC)
-WHERE status = 'Active';
-CREATE INDEX idx_follows_mutual ON follows(follower_id, following_id, status)
+-- Index for mutual follow queries (reverse direction for efficient reciprocal lookups)
+CREATE INDEX idx_follows_mutual ON follows(following_id, follower_id)
 WHERE status = 'Active';
 
 -- Blocks
