@@ -4,8 +4,8 @@ This roadmap outlines the development plan for SocialSim, organized into phases 
 
 ## Quick Navigation
 
-- [Phase 1: Data Foundation](#phase-1-data-foundation) 🔵 **Current Priority**
-- [Phase 2: Storage & Persistence Layer](#phase-2-storage--persistence-layer)
+- [Phase 1: Data Foundation](#phase-1-data-foundation)
+- [Phase 2: Storage & Persistence Layer](#phase-2-storage--persistence-layer) 🔵 **Current Priority**
 - [Phase 3: AT Protocol Foundation](#phase-3-at-protocol-foundation)
 - [Phase 4: Simulation Engine](#phase-4-simulation-engine)
 - [Phase 5: Visualization & Monitoring](#phase-5-visualization--monitoring)
@@ -117,7 +117,22 @@ This phase establishes the core data models that everything else builds upon. Ge
   - [ ] 2.1.4.2 Cache invalidation strategies
   - [ ] 2.1.4.3 Read-through/write-through patterns
 - [ ] 2.1.5 Add comprehensive unit tests for repositories
-- [ ] 2.1.6 **Milestone**: Neo4J persistence layer complete
+  - [ ] 2.1.5.1 Improve syntetic data generation for tests
+  - [ ] 2.1.5.2 Integration tests with in-memory Neo4J instance
+  - [ ] 2.1.5.3 Performance benchmarks for query patterns
+  - [ ] 2.1.5.4 Edge case handling tests
+  - [ ] 2.1.5.5 Concurrency and transaction tests
+  - [ ] 2.1.5.6 Error handling and recovery tests
+- [ ] 2.1.6 Extensive documentation of repository layer
+  - [ ] 2.1.6.0  Implement DocFx or similar for automated API docs
+    - [ ] 2.1.6.0.1 Setup DocFx configuration
+    - [ ] 2.1.6.0.2 Integrate with CI/CD for auto-generation
+    - [ ] 2.1.6.0.3 Generate API documentation site
+    - [ ] 2.1.6.0.4 Ensure existing documentation is incorporated
+  - [ ] 2.1.6.1 API documentation for query builder
+  - [ ] 2.1.6.2 API documentation for repositories
+  - [ ] 2.1.6.3 Usage examples and tutorials
+- [ ] 2.1.7 **Milestone**: Neo4J persistence layer complete
 
 ### 2.2 PostgreSQL Repository Layer (EF Core)
 - [ ] 2.2.1 Create Entity Framework Core DbContext
