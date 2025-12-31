@@ -20,24 +20,30 @@ This roadmap outlines the development plan for SocialSim, organized into phases 
 This phase establishes the core data models that everything else builds upon. Getting this right is critical to avoid costly refactoring later.
 
 ### 1.1 Social Network Data Model Design
-- [ ] Design comprehensive entity relationship diagram (ERD) for social network
-  - [ ] Define core entities (Users, Posts, Comments, Reactions, Media)
-  - [ ] Define relationship types (Follow, Block, Mute, Report)
-  - [ ] Design engagement models (Likes, Shares, Quotes, Bookmarks)
-  - [ ] Model content hierarchies (Threads, Conversations, Quote chains)
-  - [ ] Design privacy & visibility rules (Public, Followers-only, Private, Mentions)
-- [ ] Design graph data model for Neo4J
-  - [ ] Define node types and properties
-  - [ ] Define relationship types and weights
-  - [ ] Design indexes for performance
-  - [ ] Plan for temporal data (relationship history, follower count over time)
-- [ ] Design relational schema for PostgreSQL
-  - [ ] Normalize data for consistency
-  - [ ] Plan denormalization for performance where needed
-  - [ ] Design audit/history tables
-  - [ ] Define database constraints and triggers
-- [ ] Document data model with examples and use cases
-- [ ] Review and validate with stakeholders
+- [x] Design comprehensive entity relationship diagram (ERD) for social network
+  - [x] Define core entities (Users, Posts, Comments, Reactions, Media)
+  - [x] Define relationship types (Follow, Block, Mute, Report)
+  - [x] Design engagement models (Likes, Shares, Quotes, Bookmarks)
+  - [x] Model content hierarchies (Threads, Conversations, Quote chains)
+  - [x] Design privacy & visibility rules (Public, Followers-only, Private, Mentions)
+- [ ] Review and optimize graph data model for Neo4J
+  - [x] Define node types and properties (User, Post, Thread)
+  - [x] Define relationship types and weights (FOLLOWS, LIKES, POSTS, etc.)
+  - [x] Design indexes for performance
+  - [ ] Review temporal data strategy (relationship history, follower count over time)
+  - [ ] Validate graph queries for performance
+  - [ ] Test graph algorithms (PageRank, community detection)
+- [ ] Review and optimize relational schema for PostgreSQL
+  - [x] Normalize data for consistency (3NF for core entities)
+  - [x] Plan denormalization for performance (cached counts, materialized paths)
+  - [x] Design audit/history tables (visibility audit, change tracking)
+  - [x] Define database constraints and triggers (FK constraints, updated_at triggers)
+  - [ ] Review indexing strategy for query patterns
+  - [ ] Validate schema with sample queries
+  - [ ] Test database constraints and business rules
+- [x] Document and validate data model
+  - [x] Document data model with examples and use cases
+  - [ ] Review and validate with stakeholders
 - [ ] **Milestone**: Data model approved and documented
 
 ### 1.2 Simulation Data Model Design

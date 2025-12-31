@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-SocialSim.SimulationWorker-1b0b8860-61cd-48f0-80e5-d939a0945e42</UserSecretsId>
     <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

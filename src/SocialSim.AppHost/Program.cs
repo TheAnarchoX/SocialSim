@@ -1,4 +1,4 @@
-using Aspire.Hosting;
+using Microsoft.VisualBasic;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -15,7 +15,12 @@ var neo4j = builder.AddContainer("neo4j", "neo4j", "latest")
     .WithEndpoint(port: 7687, targetPort: 7687, name: "bolt");
 
 // Redis for caching and pub/sub
-var redis = builder.AddRedis("redis");
+var redis = builder.AddRedis("redis")
+    .WithRedisCommander()
+    .WithDataVolume(isReadOnly: false)
+    .WithPersistence(
+        interval: TimeSpan.FromMinutes(15),
+        keysChangedThreshold: 100);
 
 // API Service
 var api = builder.AddProject<Projects.SocialSim_Api>("api")
