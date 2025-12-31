@@ -71,8 +71,8 @@ WHERE quoted_post_id IS NOT NULL;
 
 -- Covering index for post list queries
 CREATE INDEX idx_posts_feed_covering ON posts(
-  visibility, created_at DESC, author_id, content, like_count, repost_count
-) WHERE is_deleted = FALSE;
+  visibility, created_at DESC, author_id, like_count, repost_count
+) INCLUDE (content) WHERE is_deleted = FALSE;
 ```
 
 #### Follows Table
@@ -90,12 +90,8 @@ WHERE status = 'Active';
 
 **Recommended Additions:**
 ```sql
--- Composite index for feed generation (get followed users' posts)
-CREATE INDEX idx_follows_active_follower ON follows(follower_id, following_id, created_at DESC)
-WHERE status = 'Active';
-
--- Index for mutual follow queries
-CREATE INDEX idx_follows_mutual ON follows(follower_id, following_id, status)
+-- Index for mutual follow queries (reverse direction for efficient reciprocal lookups)
+CREATE INDEX idx_follows_mutual ON follows(following_id, follower_id)
 WHERE status = 'Active';
 ```
 
