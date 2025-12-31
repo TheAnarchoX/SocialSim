@@ -386,6 +386,151 @@ CREATE TABLE circle_members (
 );
 
 -- =====================================================
+-- HISTORY & AUDIT
+-- =====================================================
+
+-- Relationship History (for temporal queries)
+CREATE TABLE relationship_history (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    relationship_type VARCHAR(32) NOT NULL, -- 'FOLLOW', 'UNFOLLOW', 'BLOCK', 'UNBLOCK', 'MUTE', 'UNMUTE'
+    action VARCHAR(16) NOT NULL, -- 'CREATED', 'DELETED', 'UPDATED'
+    metadata JSONB,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    archived_at TIMESTAMP -- Set when moved to cold storage (per stakeholder decision: archive after 1 year)
+);
+
+CREATE INDEX idx_relationship_history_user ON relationship_history(user_id, occurred_at DESC);
+CREATE INDEX idx_relationship_history_target ON relationship_history(target_user_id, occurred_at DESC);
+CREATE INDEX idx_relationship_history_type ON relationship_history(relationship_type, occurred_at DESC);
+CREATE INDEX idx_relationship_history_archive ON relationship_history(occurred_at) 
+WHERE archived_at IS NULL; -- Partial index for non-archived records
+
+-- User Metrics Snapshots (for tracking follower count over time)
+CREATE TABLE user_metrics_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    follower_count INTEGER NOT NULL,
+    following_count INTEGER NOT NULL,
+    post_count INTEGER NOT NULL,
+    engagement_rate FLOAT,
+    influence_score FLOAT,
+    snapshot_date DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    
+    CONSTRAINT uq_user_snapshot UNIQUE (user_id, snapshot_date)
+);
+
+CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
+CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
+
+-- =====================================================
+-- COMPLIANCE & CONSENT (GDPR/CCPA)
+-- =====================================================
+
+-- Consent purpose types
+CREATE TYPE consent_purpose AS ENUM (
+    'DataProcessing',       -- General data processing consent
+    'Analytics',            -- Usage analytics and metrics
+    'Personalization',      -- Personalized content and recommendations
+    'Marketing',            -- Marketing communications
+    'Research',             -- Research and simulation participation
+    'ThirdPartySharing',    -- Sharing data with third parties
+    'CrossBorderTransfer'   -- International data transfers
+);
+
+-- Consent Records (GDPR Article 7 - Conditions for consent)
+-- Note: user_id uses ON DELETE SET NULL to preserve audit trail for regulatory compliance.
+-- When user_id is NULL (user deleted), records represent historical consent that must be retained.
+-- The unique constraint allows multiple NULL user_id records, which is acceptable for deleted user audits.
+CREATE TABLE consent_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    purpose consent_purpose NOT NULL,
+    granted BOOLEAN NOT NULL,
+    consent_text TEXT NOT NULL, -- The exact text user consented to
+    consent_version VARCHAR(32) NOT NULL, -- Version of consent form
+    -- IP addresses are considered personal data under GDPR. Stored for audit trail and fraud prevention (legitimate interest basis).
+    -- Retention: IP addresses are anonymized after 90 days or deleted upon user request.
+    -- Enforcement: Anonymization is handled by application-level scheduled jobs (not enforced by this schema).
+    -- Included in data exports per GDPR Art. 20 (right to data portability).
+    ip_address INET, -- For audit trail
+    user_agent TEXT, -- Browser/client info
+    granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    withdrawn_at TIMESTAMP, -- When consent was withdrawn
+    
+    -- Note: PostgreSQL's UNIQUE constraint treats NULL values as distinct, 
+    -- allowing multiple NULL user_id records for the same purpose/version.
+    -- This is intentional to maintain consent history for deleted users.
+    CONSTRAINT uq_user_consent_purpose_version UNIQUE (user_id, purpose, consent_version)
+);
+
+CREATE INDEX idx_consent_user ON consent_records(user_id, granted_at DESC);
+CREATE INDEX idx_consent_purpose ON consent_records(purpose, granted);
+CREATE INDEX idx_consent_active ON consent_records(user_id, purpose) 
+WHERE granted = TRUE AND withdrawn_at IS NULL;
+
+-- Data Subject Requests (GDPR Article 15-22 - Rights of data subjects)
+-- Note: user_id uses ON DELETE SET NULL to preserve request history for regulatory compliance.
+-- When user_id is NULL (user deleted), records represent historical requests that must be retained for audit purposes.
+-- Multiple NULL user_id records are acceptable as they represent different historical requests from deleted users.
+CREATE TYPE data_request_type AS ENUM (
+    'Access',       -- Right of access (Art. 15)
+    'Rectification', -- Right to rectification (Art. 16)
+    'Erasure',      -- Right to erasure / "right to be forgotten" (Art. 17)
+    'Restriction',  -- Right to restriction of processing (Art. 18)
+    'Portability',  -- Right to data portability (Art. 20)
+    'Objection'     -- Right to object (Art. 21)
+);
+
+CREATE TYPE data_request_status AS ENUM (
+    'Pending',      -- Request received, not yet processed
+    'InProgress',   -- Being processed
+    'Completed',    -- Successfully completed
+    'Rejected',     -- Rejected (with reason)
+    'Expired'       -- Request expired without action
+);
+
+CREATE TABLE data_subject_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    request_type data_request_type NOT NULL,
+    status data_request_status NOT NULL DEFAULT 'Pending',
+    request_details JSONB, -- Specific details of the request
+    response_details JSONB, -- Details of how request was fulfilled
+    rejection_reason TEXT, -- If rejected, why
+    requested_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    due_by TIMESTAMP NOT NULL, -- GDPR requires response within 30 days
+    completed_at TIMESTAMP,
+    processed_by UUID REFERENCES users(id), -- Admin who processed it
+    
+    CONSTRAINT chk_due_by CHECK (due_by > requested_at)
+);
+
+CREATE INDEX idx_dsr_user ON data_subject_requests(user_id, requested_at DESC);
+CREATE INDEX idx_dsr_status ON data_subject_requests(status, due_by ASC);
+CREATE INDEX idx_dsr_pending ON data_subject_requests(due_by ASC) 
+WHERE status IN ('Pending', 'InProgress');
+
+-- Data Processing Activities Log (GDPR Article 30 - Records of processing activities)
+CREATE TABLE data_processing_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL, -- Can be NULL for system operations
+    activity_type VARCHAR(64) NOT NULL, -- e.g., 'ProfileUpdate', 'PostCreation', 'DataExport'
+    legal_basis VARCHAR(32) NOT NULL, -- 'Consent', 'Contract', 'LegitimateInterest', 'LegalObligation'
+    data_categories VARCHAR(64)[] NOT NULL, -- e.g., ['Profile', 'Content', 'Engagement']
+    purpose TEXT NOT NULL,
+    recipients VARCHAR(128)[], -- Third parties who received data
+    retention_period INTERVAL,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    metadata JSONB
+);
+
+CREATE INDEX idx_processing_log_user ON data_processing_log(user_id, occurred_at DESC);
+CREATE INDEX idx_processing_log_activity ON data_processing_log(activity_type, occurred_at DESC);
+
+-- =====================================================
 -- INDEXES
 -- =====================================================
 
@@ -396,6 +541,13 @@ CREATE INDEX idx_users_is_active ON users(is_active);
 CREATE INDEX idx_users_created_at ON users(created_at DESC);
 CREATE INDEX idx_users_follower_count ON users(follower_count DESC);
 CREATE INDEX idx_users_last_active ON users(last_active_at DESC);
+
+-- Additional user indexes for common query patterns
+CREATE INDEX idx_users_active_followers ON users(is_active, follower_count DESC) 
+WHERE is_active = TRUE AND deleted_at IS NULL;
+CREATE INDEX idx_users_simulated ON users(is_simulated, created_at DESC);
+CREATE INDEX idx_users_verified ON users(follower_count DESC) 
+WHERE is_verified = TRUE AND is_active = TRUE;
 
 -- Posts
 CREATE INDEX idx_posts_author ON posts(author_id, created_at DESC);
@@ -409,11 +561,23 @@ CREATE INDEX idx_posts_quoted ON posts(quoted_post_id);
 -- Full-text search on posts
 CREATE INDEX idx_posts_content_fts ON posts USING GIN (to_tsvector('english', content));
 
+-- Additional post indexes for feed generation and discovery
+CREATE INDEX idx_posts_public_feed ON posts(visibility, created_at DESC)
+WHERE is_deleted = FALSE AND visibility = 'Public';
+CREATE INDEX idx_posts_reply_chain ON posts(reply_to_post_id, created_at ASC)
+WHERE is_reply = TRUE;
+CREATE INDEX idx_posts_quote_cascade ON posts(quoted_post_id, created_at DESC)
+WHERE quoted_post_id IS NOT NULL;
+
 -- Follows
 CREATE INDEX idx_follows_follower ON follows(follower_id, created_at DESC);
 CREATE INDEX idx_follows_following ON follows(following_id, created_at DESC);
 CREATE INDEX idx_follows_status ON follows(status);
 CREATE INDEX idx_follows_active ON follows(follower_id, following_id) WHERE status = 'Active';
+
+-- Index for mutual follow queries (reverse direction for efficient reciprocal lookups)
+CREATE INDEX idx_follows_mutual ON follows(following_id, follower_id)
+WHERE status = 'Active';
 
 -- Blocks
 CREATE INDEX idx_blocks_blocker ON blocks(blocker_id, created_at DESC);
@@ -444,6 +608,8 @@ CREATE INDEX idx_bookmarks_folder ON bookmarks(folder_id, created_at DESC);
 -- Threads
 CREATE INDEX idx_threads_last_activity ON threads(last_activity_at DESC);
 CREATE INDEX idx_threads_post_count ON threads(post_count DESC);
+CREATE INDEX idx_threads_active ON threads(last_activity_at DESC, post_count DESC)
+WHERE is_locked = FALSE;
 
 -- =====================================================
 -- TRIGGERS & FUNCTIONS
