@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <IsAspireSharedProject>true</IsAspireSharedProject>
     <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

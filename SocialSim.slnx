@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/SocialSim.Api/SocialSim.Api.csproj" />
+    <Project Path="src/SocialSim.AppHost/SocialSim.AppHost.csproj" />
+    <Project Path="src/SocialSim.Core/SocialSim.Core.csproj" />
+    <Project Path="src/SocialSim.ServiceDefaults/SocialSim.ServiceDefaults.csproj" />
+    <Project Path="src/SocialSim.SimulationWorker/SocialSim.SimulationWorker.csproj" />
+  </Folder>
+</Solution>
