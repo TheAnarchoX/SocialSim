@@ -193,12 +193,17 @@ For performance, use **denormalized visibility checks** in hot paths:
 4. Use materialized views for complex visibility
 
 ```sql
--- Optimized query: Get public posts (no visibility check needed)
+-- Optimized query: Get public posts for a viewer ($viewerId)
+-- Note: Public visibility still enforces block rules via Blocks.
 SELECT p.* FROM Posts p
 JOIN Users u ON p.AuthorId = u.Id
 WHERE p.Visibility = 'Public'
   AND u.IsPrivate = false
   AND p.IsDeleted = false
+  AND NOT EXISTS (
+      SELECT 1 FROM Blocks b
+      WHERE b.BlockerId = p.AuthorId AND b.BlockedId = $viewerId
+  )
 ORDER BY p.CreatedAt DESC
 LIMIT 50;
 
