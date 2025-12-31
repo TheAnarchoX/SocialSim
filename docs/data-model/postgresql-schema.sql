@@ -438,19 +438,26 @@ CREATE TYPE consent_purpose AS ENUM (
 );
 
 -- Consent Records (GDPR Article 7 - Conditions for consent)
+-- Note: user_id uses ON DELETE SET NULL to preserve audit trail for regulatory compliance.
+-- When user_id is NULL (user deleted), records represent historical consent that must be retained.
+-- The unique constraint allows multiple NULL user_id records, which is acceptable for deleted user audits.
 CREATE TABLE consent_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     purpose consent_purpose NOT NULL,
     granted BOOLEAN NOT NULL,
     consent_text TEXT NOT NULL, -- The exact text user consented to
     consent_version VARCHAR(32) NOT NULL, -- Version of consent form
+    -- IP addresses are considered personal data under GDPR. Stored for audit trail and fraud prevention (legitimate interest basis).
+    -- Retention: IP addresses are anonymized after 90 days or deleted upon user request.
+    -- Enforcement: Anonymization is handled by application-level scheduled jobs (not enforced by this schema).
+    -- Included in data exports per GDPR Art. 20 (right to data portability).
     ip_address INET, -- For audit trail
     user_agent TEXT, -- Browser/client info
     granted_at TIMESTAMP NOT NULL DEFAULT NOW(),
     withdrawn_at TIMESTAMP, -- When consent was withdrawn
     
-    CONSTRAINT uq_user_consent_purpose UNIQUE (user_id, purpose, consent_version)
+    CONSTRAINT uq_user_consent_purpose_version UNIQUE (user_id, purpose, consent_version)
 );
 
 CREATE INDEX idx_consent_user ON consent_records(user_id, granted_at DESC);
@@ -459,6 +466,9 @@ CREATE INDEX idx_consent_active ON consent_records(user_id, purpose)
 WHERE granted = TRUE AND withdrawn_at IS NULL;
 
 -- Data Subject Requests (GDPR Article 15-22 - Rights of data subjects)
+-- Note: user_id uses ON DELETE SET NULL to preserve request history for regulatory compliance.
+-- When user_id is NULL (user deleted), records represent historical requests that must be retained for audit purposes.
+-- Multiple NULL user_id records are acceptable as they represent different historical requests from deleted users.
 CREATE TYPE data_request_type AS ENUM (
     'Access',       -- Right of access (Art. 15)
     'Rectification', -- Right to rectification (Art. 16)
@@ -478,7 +488,7 @@ CREATE TYPE data_request_status AS ENUM (
 
 CREATE TABLE data_subject_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     request_type data_request_type NOT NULL,
     status data_request_status NOT NULL DEFAULT 'Pending',
     request_details JSONB, -- Specific details of the request
