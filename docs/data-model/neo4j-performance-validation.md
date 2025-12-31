@@ -421,6 +421,11 @@ def generate_test_network(driver, num_users=10000, avg_follows_per_user=100):
             user_ids.append(user_id)
         
         # Create follows with preferential attachment (power law)
+        # Pre-calculate weights once for efficiency
+        user_weights = [1 + random.random() ** 2 for _ in user_ids]
+        
+        # Batch collect all follow relationships
+        follow_relationships = []
         for follower_id in user_ids:
             num_follows = min(int(random.expovariate(1.0 / avg_follows_per_user)), 1000)
             
@@ -428,24 +433,33 @@ def generate_test_network(driver, num_users=10000, avg_follows_per_user=100):
             following_ids = random.choices(
                 user_ids, 
                 k=num_follows,
-                weights=[1 + random.random() ** 2 for _ in user_ids]
+                weights=user_weights
             )
             
             for following_id in following_ids:
                 if follower_id != following_id:
-                    session.run("""
-                        MATCH (follower:User {id: $follower_id})
-                        MATCH (following:User {id: $following_id})
-                        MERGE (follower)-[:FOLLOWS {
-                            createdAt: datetime(),
-                            activeFrom: datetime(),
-                            activeTo: NULL,
-                            strength: $strength,
-                            notificationsEnabled: true
-                        }]->(following)
-                    """, follower_id=follower_id, 
-                         following_id=following_id,
-                         strength=random.uniform(0.3, 1.0))
+                    follow_relationships.append({
+                        'follower_id': follower_id,
+                        'following_id': following_id,
+                        'strength': random.uniform(0.3, 1.0)
+                    })
+        
+        # Batch create all follows using UNWIND
+        batch_size = 10000
+        for i in range(0, len(follow_relationships), batch_size):
+            batch = follow_relationships[i:i + batch_size]
+            session.run("""
+                UNWIND $relationships AS rel
+                MATCH (follower:User {id: rel.follower_id})
+                MATCH (following:User {id: rel.following_id})
+                MERGE (follower)-[:FOLLOWS {
+                    createdAt: datetime(),
+                    activeFrom: datetime(),
+                    activeTo: NULL,
+                    strength: rel.strength,
+                    notificationsEnabled: true
+                }]->(following)
+            """, relationships=batch)
         
         # Update cached counts
         session.run("""
