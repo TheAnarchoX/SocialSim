@@ -4,14 +4,26 @@ This directory contains the comprehensive data model design for SocialSim's soci
 
 ## Documents
 
+### Core Design
 - [ERD Overview](./ERD.md) - Complete entity relationship diagram with visual representations
 - [Core Entities](./core-entities.md) - Detailed specifications for Users, Posts, Comments, Media
 - [Relationships](./relationships.md) - Social relationships (Follow, Block, Mute, Report)
 - [Engagement Models](./engagement-models.md) - Likes, Shares, Quotes, Bookmarks
 - [Content Hierarchies](./content-hierarchies.md) - Threads, Conversations, Quote chains
 - [Privacy & Visibility](./privacy-visibility.md) - Access control and visibility rules
+
+### Database Schemas
 - [PostgreSQL Schema](./postgresql-schema.sql) - Complete SQL DDL for relational database
-- [Neo4j Model](./neo4j-model.md) - Graph database model with Cypher examples
+- [Neo4j Model](./neo4j-model.md) - Graph database model with Cypher examples and temporal data strategy
+
+### Performance & Validation
+- [Neo4j Performance Validation](./neo4j-performance-validation.md) - Query validation, graph algorithms, benchmarking
+- [PostgreSQL Performance Validation](./postgresql-performance-validation.md) - Index strategy, sample queries, constraint testing
+
+### Project Management
+- [Migration Plan](./migration-plan.md) - Database migration and deployment strategy
+- [Sample Data](./sample-data.md) - Sample data for testing and development
+- [Stakeholder Review](./STAKEHOLDER_REVIEW.md) - **Phase 1.1 completion summary and sign-off**
 
 ## Key Design Principles
 

@@ -535,6 +535,210 @@ SET f.strength = CASE
 END;
 ```
 
+## Temporal Data Strategy
+
+### Relationship History Tracking
+
+To track historical changes in relationships (follows, unfollows, etc.), we use a hybrid approach:
+
+#### Approach 1: Event Log in PostgreSQL
+
+Store all relationship events in PostgreSQL for detailed history:
+
+```sql
+CREATE TABLE relationship_history (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id),
+    target_user_id UUID NOT NULL REFERENCES users(id),
+    relationship_type VARCHAR(32) NOT NULL, -- 'FOLLOW', 'UNFOLLOW', 'BLOCK', 'UNBLOCK'
+    action VARCHAR(16) NOT NULL, -- 'CREATED', 'DELETED', 'UPDATED'
+    metadata JSONB,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_relationship_history_user ON relationship_history(user_id, occurred_at DESC);
+CREATE INDEX idx_relationship_history_target ON relationship_history(target_user_id, occurred_at DESC);
+```
+
+Query historical state at a specific time:
+
+```sql
+-- Who was user following at 2025-06-01?
+WITH latest_events AS (
+    SELECT DISTINCT ON (target_user_id)
+        target_user_id,
+        action,
+        occurred_at
+    FROM relationship_history
+    WHERE user_id = $userId
+        AND relationship_type = 'FOLLOW'
+        AND occurred_at <= '2025-06-01'
+    ORDER BY target_user_id, occurred_at DESC
+)
+SELECT target_user_id
+FROM latest_events
+WHERE action = 'CREATED';
+```
+
+#### Approach 2: Temporal Properties on Neo4j Relationships
+
+For Neo4j, maintain `activeFrom` and `activeTo` dates on relationships:
+
+```cypher
+// When creating a follow
+CREATE (follower:User {id: $followerId})-[:FOLLOWS {
+  createdAt: datetime(),
+  activeFrom: datetime(),
+  activeTo: NULL,  // NULL means currently active
+  strength: 0.5,
+  version: 1
+}]->(following:User {id: $followingId})
+
+// When unfollowing, don't delete - set activeTo
+MATCH (follower:User {id: $followerId})-[f:FOLLOWS]->(following:User {id: $followingId})
+WHERE f.activeTo IS NULL
+SET f.activeTo = datetime()
+
+// Query active follows only
+MATCH (follower:User)-[f:FOLLOWS]->(following:User)
+WHERE f.activeTo IS NULL
+RETURN follower, following
+```
+
+#### Approach 3: Relationship Versioning
+
+For critical relationships, maintain multiple versions:
+
+```cypher
+// Create new version when relationship changes
+MATCH (a:User {id: $userId})-[old:FOLLOWS]->(b:User)
+WHERE old.activeTo IS NULL
+SET old.activeTo = datetime()
+
+CREATE (a)-[:FOLLOWS {
+  createdAt: datetime(),
+  activeFrom: datetime(),
+  activeTo: NULL,
+  strength: 0.8,
+  version: old.version + 1,
+  previousVersion: id(old)
+}]->(b)
+```
+
+### Follower Count Over Time
+
+Track follower count changes using a time-series approach:
+
+#### Option 1: Periodic Snapshots in PostgreSQL
+
+```sql
+CREATE TABLE user_metrics_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id),
+    follower_count INTEGER NOT NULL,
+    following_count INTEGER NOT NULL,
+    post_count INTEGER NOT NULL,
+    engagement_rate FLOAT,
+    influence_score FLOAT,
+    snapshot_date DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    
+    CONSTRAINT uq_user_snapshot UNIQUE (user_id, snapshot_date)
+);
+
+CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
+CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
+
+-- Query follower growth over time
+SELECT 
+    snapshot_date,
+    follower_count,
+    follower_count - LAG(follower_count) OVER (ORDER BY snapshot_date) AS daily_change,
+    ROUND(100.0 * (follower_count - LAG(follower_count) OVER (ORDER BY snapshot_date)) 
+        / NULLIF(LAG(follower_count) OVER (ORDER BY snapshot_date), 0), 2) AS growth_rate_pct
+FROM user_metrics_snapshots
+WHERE user_id = $userId
+ORDER BY snapshot_date;
+```
+
+#### Option 2: Materialized View for Current Metrics
+
+```sql
+CREATE MATERIALIZED VIEW user_network_metrics AS
+SELECT 
+    u.id,
+    u.handle,
+    COUNT(DISTINCT f1.id) AS follower_count,
+    COUNT(DISTINCT f2.id) AS following_count,
+    COUNT(DISTINCT CASE WHEN f1.created_at > NOW() - INTERVAL '7 days' THEN f1.id END) AS new_followers_7d,
+    COUNT(DISTINCT CASE WHEN f1.created_at > NOW() - INTERVAL '30 days' THEN f1.id END) AS new_followers_30d
+FROM users u
+LEFT JOIN follows f1 ON u.id = f1.following_id AND f1.status = 'Active'
+LEFT JOIN follows f2 ON u.id = f2.follower_id AND f2.status = 'Active'
+WHERE u.is_active = TRUE
+GROUP BY u.id, u.handle;
+
+CREATE UNIQUE INDEX idx_network_metrics_id ON user_network_metrics(id);
+
+-- Refresh periodically
+REFRESH MATERIALIZED VIEW CONCURRENTLY user_network_metrics;
+```
+
+### Temporal Queries in Neo4j
+
+Query network state at specific points in time:
+
+```cypher
+// Network topology at 2025-06-01
+MATCH (a:User)-[f:FOLLOWS]->(b:User)
+WHERE f.activeFrom <= datetime('2025-06-01')
+  AND (f.activeTo IS NULL OR f.activeTo > datetime('2025-06-01'))
+RETURN a, f, b
+
+// Calculate historical PageRank (requires snapshot)
+CALL gds.graph.project(
+  'historical-network-2025-06',
+  'User',
+  {
+    FOLLOWS: {
+      properties: ['strength'],
+      filter: 'r.activeFrom <= datetime("2025-06-01") AND (r.activeTo IS NULL OR r.activeTo > datetime("2025-06-01"))'
+    }
+  }
+)
+
+CALL gds.pageRank.stream('historical-network-2025-06')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).handle AS handle, score
+ORDER BY score DESC
+```
+
+### Best Practices for Temporal Data
+
+1. **PostgreSQL for Detailed History**: Use PostgreSQL event log for complete audit trail
+2. **Neo4j for Active State**: Neo4j focuses on current/recent relationships for performance
+3. **Periodic Snapshots**: Take daily/weekly snapshots of metrics for trend analysis
+4. **Soft Deletes**: Use `activeTo` instead of deleting relationships in Neo4j
+5. **Event Sourcing**: Emit events for all relationship changes to enable replay
+6. **Retention Policy**: Archive old Neo4j relationships (activeTo > 1 year) to PostgreSQL
+7. **Indexed Queries**: Always include temporal filters in WHERE clauses for performance
+
+### Simulation-Specific Considerations
+
+For simulation scenarios requiring time travel:
+
+```cypher
+// Store simulation timestamp on nodes
+MERGE (u:User {id: $userId})
+SET u.simulationTime = datetime($simulationTimestamp)
+
+// Query at specific simulation time
+MATCH (a:User)-[f:FOLLOWS]->(b:User)
+WHERE f.activeFrom <= datetime($simulationTime)
+  AND (f.activeTo IS NULL OR f.activeTo > datetime($simulationTime))
+RETURN a, f, b
+```
+
 ## Next Steps
 
 See [postgresql-schema.sql](./postgresql-schema.sql) for the relational database schema that complements this graph model.

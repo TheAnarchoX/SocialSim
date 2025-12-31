@@ -386,6 +386,43 @@ CREATE TABLE circle_members (
 );
 
 -- =====================================================
+-- HISTORY & AUDIT
+-- =====================================================
+
+-- Relationship History (for temporal queries)
+CREATE TABLE relationship_history (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    relationship_type VARCHAR(32) NOT NULL, -- 'FOLLOW', 'UNFOLLOW', 'BLOCK', 'UNBLOCK', 'MUTE', 'UNMUTE'
+    action VARCHAR(16) NOT NULL, -- 'CREATED', 'DELETED', 'UPDATED'
+    metadata JSONB,
+    occurred_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_relationship_history_user ON relationship_history(user_id, occurred_at DESC);
+CREATE INDEX idx_relationship_history_target ON relationship_history(target_user_id, occurred_at DESC);
+CREATE INDEX idx_relationship_history_type ON relationship_history(relationship_type, occurred_at DESC);
+
+-- User Metrics Snapshots (for tracking follower count over time)
+CREATE TABLE user_metrics_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    follower_count INTEGER NOT NULL,
+    following_count INTEGER NOT NULL,
+    post_count INTEGER NOT NULL,
+    engagement_rate FLOAT,
+    influence_score FLOAT,
+    snapshot_date DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    
+    CONSTRAINT uq_user_snapshot UNIQUE (user_id, snapshot_date)
+);
+
+CREATE INDEX idx_snapshots_user_date ON user_metrics_snapshots(user_id, snapshot_date DESC);
+CREATE INDEX idx_snapshots_date ON user_metrics_snapshots(snapshot_date DESC);
+
+-- =====================================================
 -- INDEXES
 -- =====================================================
 
@@ -396,6 +433,13 @@ CREATE INDEX idx_users_is_active ON users(is_active);
 CREATE INDEX idx_users_created_at ON users(created_at DESC);
 CREATE INDEX idx_users_follower_count ON users(follower_count DESC);
 CREATE INDEX idx_users_last_active ON users(last_active_at DESC);
+
+-- Additional user indexes for common query patterns
+CREATE INDEX idx_users_active_followers ON users(is_active, follower_count DESC) 
+WHERE is_active = TRUE AND deleted_at IS NULL;
+CREATE INDEX idx_users_simulated ON users(is_simulated, created_at DESC);
+CREATE INDEX idx_users_verified ON users(follower_count DESC) 
+WHERE is_verified = TRUE AND is_active = TRUE;
 
 -- Posts
 CREATE INDEX idx_posts_author ON posts(author_id, created_at DESC);
@@ -409,11 +453,25 @@ CREATE INDEX idx_posts_quoted ON posts(quoted_post_id);
 -- Full-text search on posts
 CREATE INDEX idx_posts_content_fts ON posts USING GIN (to_tsvector('english', content));
 
+-- Additional post indexes for feed generation and discovery
+CREATE INDEX idx_posts_public_feed ON posts(visibility, created_at DESC)
+WHERE is_deleted = FALSE AND visibility = 'Public';
+CREATE INDEX idx_posts_reply_chain ON posts(reply_to_post_id, created_at ASC)
+WHERE is_reply = TRUE;
+CREATE INDEX idx_posts_quote_cascade ON posts(quoted_post_id, created_at DESC)
+WHERE quoted_post_id IS NOT NULL;
+
 -- Follows
 CREATE INDEX idx_follows_follower ON follows(follower_id, created_at DESC);
 CREATE INDEX idx_follows_following ON follows(following_id, created_at DESC);
 CREATE INDEX idx_follows_status ON follows(status);
 CREATE INDEX idx_follows_active ON follows(follower_id, following_id) WHERE status = 'Active';
+
+-- Additional follow indexes for relationship queries
+CREATE INDEX idx_follows_active_follower ON follows(follower_id, following_id, created_at DESC)
+WHERE status = 'Active';
+CREATE INDEX idx_follows_mutual ON follows(follower_id, following_id, status)
+WHERE status = 'Active';
 
 -- Blocks
 CREATE INDEX idx_blocks_blocker ON blocks(blocker_id, created_at DESC);
@@ -444,6 +502,8 @@ CREATE INDEX idx_bookmarks_folder ON bookmarks(folder_id, created_at DESC);
 -- Threads
 CREATE INDEX idx_threads_last_activity ON threads(last_activity_at DESC);
 CREATE INDEX idx_threads_post_count ON threads(post_count DESC);
+CREATE INDEX idx_threads_active ON threads(last_activity_at DESC, post_count DESC)
+WHERE is_locked = FALSE;
 
 -- =====================================================
 -- TRIGGERS & FUNCTIONS
