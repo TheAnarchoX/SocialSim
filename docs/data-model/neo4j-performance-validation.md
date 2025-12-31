@@ -445,6 +445,7 @@ def generate_test_network(driver, num_users=10000, avg_follows_per_user=100):
                     })
         
         # Batch create all follows using UNWIND
+        # Use 10,000 relationships per batch for optimal Neo4j write performance
         batch_size = 10000
         for i in range(0, len(follow_relationships), batch_size):
             batch = follow_relationships[i:i + batch_size]

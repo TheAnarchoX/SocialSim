@@ -70,6 +70,8 @@ CREATE INDEX idx_posts_quote_cascade ON posts(quoted_post_id, created_at DESC)
 WHERE quoted_post_id IS NOT NULL;
 
 -- Covering index for post list queries
+-- visibility and created_at are in the key for filtering/sorting
+-- Other columns included for query performance without table lookups
 CREATE INDEX idx_posts_feed_covering ON posts(
   visibility, created_at DESC, author_id, like_count, repost_count
 ) INCLUDE (content) WHERE is_deleted = FALSE;
